@@ -7,23 +7,26 @@
 </head>
 <body>
 	<div id="container">
-		<h1>Whiteboard</h1>
+		<div id="header">
+			<h1>Whiteboard</h1>
+		</div>
 		<div id="leftBar">
 			<form>
-				<input type="radio" name="selection" value="pen" checked>Pen
-				<input type="radio" name="selection" value="rect">Rectangle
-				<input type="radio" name="selection" value="circle">Circle
-				<input type="radio" name="selection" value="line">Line
-				<input type="radio" name="selection" value="text">Text
-				<input type="radio" name="selection" value="math">Math
-				<input type="radio" name="selection" value="eraser">Eraser
-				<input type="radio" name="selection" value="select">Select
+				Pen<input type="radio" name="selection" value="pen" checked>
+				Rectangle<input type="radio" name="selection" value="rect">
+				Circle<input type="radio" name="selection" value="circle">
+				Line<input type="radio" name="selection" value="line">
+				Text<input type="radio" name="selection" value="text">
+				Math<input type="radio" name="selection" value="math">
+				Eraser<input type="radio" name="selection" value="eraser">
+				Select<input type="radio" name="selection" value="select">
 			</form>
+			<br>
 			<form>
-				<input type="radio" name="color" value="black" checked>Black
-				<input type="radio" name="color" value="red">Red
-				<input type="radio" name="color" value="green">Green
-				<input type="radio" name="color" value="blue">Blue
+				Black<input type="radio" name="color" value="black" checked>
+				Red<input type="radio" name="color" value="red">
+				Green<input type="radio" name="color" value="green">
+				Blue<input type="radio" name="color" value="blue">
 			</form>
 		</div>
 		<div id="drawBoard">
@@ -32,6 +35,34 @@
 			</canvas>
 		</div>
 		<div id="rightBar">
+			<form>
+				Line Width:
+  				<select name="lineWidth">
+    				<option value="2">2</option>
+				    <option value="4">4</option>
+				    <option value="6">6</option>
+				    <option value="8">8</option>
+  				</select>
+			</form>
+			<br>
+			<form>
+				Font:
+  				<select name="font">
+    				<option value="times">Times New Roman</option>
+				    <option value="arial">Arial</option>
+				    <option value="cambria">Cambria</option>
+  				</select>
+			</form>
+			<br>
+			<form>
+				Font Size:
+  				<select name="fontSize">
+    				<option value="10">10</option>
+				    <option value="12">12</option>
+				    <option value="14">14</option>
+				    <option value="16">16</option>
+  				</select>
+			</form>
 		</div>
 	</div>
 	<script type="text/javascript" src="ap1.js"></script>
