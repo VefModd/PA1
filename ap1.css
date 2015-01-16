@@ -1,10 +1,8 @@
 canvas {
-	width: 1100px;
-	height: 600px;
-
 
 	border-style: solid;
     border-width: 5px;
+    border-color: red;
 }
 
 h1 {
@@ -20,7 +18,7 @@ h1 {
 }
 
 #container {
-	
+	position: relative;
 }
 
 #leftBar {
@@ -43,6 +41,7 @@ h1 {
 #drawBoard {
 	width: 1100px;
 	height: 600px;
+	
 	float: left;
 	margin-right: 20px;
 
