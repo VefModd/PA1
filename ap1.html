@@ -2,16 +2,31 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Paint</title>
+	<link rel="stylesheet" type="text/css" href="ap1.css" />
+	<title>Whiteboard</title>
 </head>
 <body>
 	<div id="container">
-		<h1>Paint</h1>
-		<canvas id="imageView" width="400" height="300" style="border:1px solid #000000;">
-			<p>
-				Unfortunately, your browser is currently unsupported by our web application. We are sorry for the inconvenience.
-			</p>
-		</canvas>
+		<h1>Whiteboard</h1>
+		<div id="leftBar">
+			<form>
+				<input type="radio" name="selection" value="pen" checked>Pen
+				<input type="radio" name="selection" value="rect" checked>Rectangle
+				<input type="radio" name="selection" value="circle" checked>Circle
+				<input type="radio" name="selection" value="line" checked>Line
+				<input type="radio" name="selection" value="text" checked>Text
+				<input type="radio" name="selection" value="math" checked>Math
+				<input type="radio" name="selection" value="eraser" checked>Eraser
+				<input type="radio" name="selection" value="select" checked>Select
+			</form>
+		</div>
+		<div id="drawBoard">
+			<canvas>
+				<p> Unfortunately, your browser is currently unsupported by our web application. We are sorry for the inconvenience.</p>
+			</canvas>
+		</div>
+		<div id="rightBar">
+		</div>
 	</div>
 	<script type="text/javascript" src="ap1.js"></script>
 </body>
