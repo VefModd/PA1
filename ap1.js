@@ -1,5 +1,6 @@
 if(window.addEventListener) {
   window.addEventListener('load', function() {
+
     var canvas, canvasContext, tool;
 
     function init() {
