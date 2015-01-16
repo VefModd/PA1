@@ -11,6 +11,7 @@ window.addEventListener('load', function () {
   function init () {
     // Find the canvas element.
     canvas = document.getElementById('canvasDrawBoard');
+    
     if (!canvas) {
       alert('Error: I cannot find the canvas element!');
       return;
@@ -23,6 +24,11 @@ window.addEventListener('load', function () {
 
     // Get the 2D canvas context.
     context = canvas.getContext('2d');
+    context.canvas.width = window.innerWidth - 20;
+    context.canvas.height = window.innerHeight - 20;
+    //context.fillStyle="#D0D0D0 ";
+    //context.fillRect(0,0,context.canvas.width,context.canvas.height);
+    
     if (!context) {
       alert('Error: failed to getContext!');
       return;
