@@ -4,13 +4,19 @@ $(document).ready(function() {
 
   var drawing = {
     shapes: [],
-    nextObject: 'circle',
+    nextObject: 'line',
     nextColor: 'black',
+    lineWidth: 3,
     
     drawAll: function drawAll() {
       for(var i = 0; i < this.shapes.length; i++) {
         this.shapes[i].draw();
       }
+    },
+
+    clearBoard: function clearBoard() {
+      this.shapes = [];
+      context.clearRect(0, 0, canvas.width, canvas.height);
     }
   }
 
@@ -19,35 +25,47 @@ $(document).ready(function() {
     this.y = y;
   }
 
-  function Line(startPoint, endPoint) {
+  function Line(startPoint, endPoint, color, lineWidth) {
     this.startPoint = startPoint;
     this.endPoint = endPoint;
+    this.color = color;
+    this.lineWidth = lineWidth;
 
     this.draw = function draw() {
       context.beginPath();
       context.moveTo(this.startPoint.x, this.startPoint.y);
       context.lineTo(this.endPoint.x, this.endPoint.y);
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
       context.stroke();
     }
   }
 
-  function Rect(point, width, height) {
+  function Rect(point, width, height, color, lineWidth) {
     this.point = point;
     this.height = height;
     this.width = width;
+    this.color = color;
+    this.lineWidth = lineWidth;
 
     this.draw = function draw() {
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
       context.strokeRect(this.point.x, this.point.y, this.width, this.height);
     }
   }
 
-  function Circle(point, radius) {
+  function Circle(point, radius, color, lineWidth) {
     this.point = point;
     this.radius = radius;
+    this.color = color;
+    this.lineWidth = lineWidth;
 
     this.draw = function draw() {
       context.beginPath(); 
       context.arc(this.point.x, this.point.y, this.radius, 0, 2 * Math.PI, false);
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
       context.stroke();
       context.closePath();
     }
@@ -85,6 +103,8 @@ $(document).ready(function() {
         context.beginPath();
         context.moveTo(startPoint.x, startPoint.y);
         context.lineTo(x, y);
+        context.strokeStyle = drawing.nextColor;
+        context.lineWidth = drawing.lineWidth;
         context.stroke();
       } else if(drawing.nextObject === 'rect') {
         width = Math.abs(x - startPoint.x);
@@ -92,6 +112,8 @@ $(document).ready(function() {
         xRect = Math.min(x, startPoint.x);
         yRect = Math.min(y, startPoint.y);
         context.clearRect(0, 0, canvas.width, canvas.height);
+        context.strokeStyle = drawing.nextColor;
+        context.lineWidth = drawing.lineWidth;
         context.strokeRect(xRect, yRect, width, height);
       } else if(drawing.nextObject === 'circle') {
         xCircle = (x + startPoint.x) / 2;
@@ -102,6 +124,8 @@ $(document).ready(function() {
         context.beginPath();
         context.arc(xCircle, yCircle, radius, 0, 2 * Math.PI, false);
         context.clearRect(0, 0, canvas.width, canvas.height);
+        context.strokeStyle = drawing.nextColor;
+        context.lineWidth = drawing.lineWidth;
         context.stroke();
         context.closePath();
       }
@@ -116,18 +140,103 @@ $(document).ready(function() {
 
     if(drawing.nextObject === 'line') {
       var endPoint = new Point(x, y);
-      drawing.shapes.push(new Line(startPoint, endPoint));
+      drawing.shapes.push(new Line(startPoint, endPoint, drawing.nextColor, drawing.lineWidth));
     } else if(drawing.nextObject === 'rect') {
       var point = new Point(xRect, yRect);
-      drawing.shapes.push(new Rect(point, width, height));
+      drawing.shapes.push(new Rect(point, width, height, drawing.nextColor, drawing.lineWidth));
     } else if(drawing.nextObject === 'circle') {
       var point = new Point(xCircle, yCircle);
-      drawing.shapes.push(new Circle(point, radius));
+      drawing.shapes.push(new Circle(point, radius, drawing.nextColor, drawing.lineWidth));
     }
     
     drawing.drawAll();
     isDrawing = false;
   });
+
+  $('#pen').click(function(e) {
+    drawing.nextObject = 'pen';
+  });
+
+  $('#rect').click(function(e) {
+    drawing.nextObject = 'rect';
+  });
+
+  $('#line').click(function(e) {
+    drawing.nextObject = 'line';
+  });
+
+  $('#circle').click(function(e) {
+    drawing.nextObject = 'circle';
+  });
+
+  $('#text').click(function(e) {
+    drawing.nextObject = 'text';
+  });
+
+  $('#math').click(function(e) {
+    drawing.nextObject = 'math';
+  });
+
+  $('#eraser').click(function(e) {
+    drawing.nextObject = 'eraser';
+  });
+
+  $('#select').click(function(e) {
+    drawing.nextObject = 'select';
+  });
+
+  $('#black').click(function(e) {
+    drawing.nextColor = 'black';
+  });
+
+  $('#red').click(function(e) {
+    drawing.nextColor = 'red';
+  });
+
+  $('#green').click(function(e) {
+    drawing.nextColor = 'green';
+  });
+
+  $('#blue').click(function(e) {
+    drawing.nextColor = 'blue';
+  });
+
+  $('#clearBoard').click(function(e) {
+    drawing.clearBoard();
+  });
+
+  $('#extrasmall').click(function(e) {
+    drawing.lineWidth = 1;
+  });
+
+  $('#small').click(function(e) {
+    drawing.lineWidth = 3;
+  });
+
+  $('#medium').click(function(e) {
+    drawing.lineWidth = 5;
+  });
+
+  $('#large').click(function(e) {
+    drawing.lineWidth = 9;
+  });
+
+  $('#extralarge').click(function(e) {
+    drawing.lineWidth = 12;
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
