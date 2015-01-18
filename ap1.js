@@ -3,6 +3,19 @@ if(window.addEventListener) {
 
     var canvas, canvasContext;
 
+    var drawing = {
+      //shapes: [],
+      nextObject: 'pen',
+      nextColor: 'black',
+
+      /*
+      drawAll: function drawAll() {
+        for(int i = 0; i < shapes.length; i++) {
+          shapes[i].draw();
+        }
+      }*/
+    };
+
     function init() {
       canvas = document.getElementById('drawBoard');
 
@@ -23,12 +36,32 @@ if(window.addEventListener) {
         return;
       }
 
+      canvas.addEventListener('mousedown', ev_mousedown, false);
+      canvas.addEventListener('mouseup', ev_mouseup, false);
+    }
+
+    function Pen() {
+      this.draw = function draw(x, y) {
+        //console.log(x, y);
+        canvasContext.lineTo(x,y);
+        canvasContext.stroke();
+      }
+    }
+
+    function ev_mousedown(ev) {
+      //console.log("mousedown");
+      canvasContext.beginPath();
+      canvasContext.moveTo(ev._x, ev._y);
       canvas.addEventListener('mousemove', ev_mousemove, false);
     }
 
-    var started = false;
+    function ev_mouseup(ev) {
+      //console.log("mouseup");
+      canvas.removeEventListener('mousemove', ev_mousemove, false);
+    }
 
     function ev_mousemove(ev) {
+      //console.log("mousemove");
       var x, y;
 
       // get the mouse position relative to the canvas element
@@ -37,13 +70,11 @@ if(window.addEventListener) {
         y = ev.layerY;
       }
 
-      if(!started) {
-        canvasContext.beginPath();
-        canvasContext.moveTo(x, y);
-        started = true;
-      } else {
-        canvasContext.lineTo(x, y);
-        canvasContext.stroke();
+      //console.log(drawing.nextObject);
+
+      if(drawing.nextObject === 'pen') {
+        var pen = new Pen();
+        pen.draw(x, y);
       }
     }
 
