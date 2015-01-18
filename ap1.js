@@ -1,7 +1,7 @@
 if(window.addEventListener) {
   window.addEventListener('load', function() {
 
-    var canvas, canvasContext, tool;
+    var canvas, canvasContext;
 
     function init() {
       canvas = document.getElementById('drawBoard');
@@ -22,8 +22,6 @@ if(window.addEventListener) {
         alert('The canvas context cannot be reached!');
         return;
       }
-
-      //tool = new pen();
 
       canvas.addEventListener('mousemove', ev_mousemove, false);
     }
