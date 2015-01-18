@@ -31,13 +31,21 @@ $(document).ready(function() {
     }
   }
 
-  context = canvas.getContext('2d');
-    context.canvas.width = window.innerWidth - 20;
-    context.canvas.height = window.innerHeight - 20;
+  function Pen(point) {
+    this.point = point;
 
-    var startX, startY;
-    var isDrawing = false;
-    var startPoint, endPoint;
+    this.draw = function draw() {
+      context.lineTo(point.x, point.y);
+      context.stroke();
+    }
+  }
+
+  context = canvas.getContext('2d');
+  context.canvas.width = window.innerWidth - 20;
+  context.canvas.height = window.innerHeight - 20;
+
+  var isDrawing = false;
+  var startPoint, endPoint;
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
