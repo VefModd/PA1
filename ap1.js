@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   var drawing = {
     shapes: [],
-    nextObject: 'line',
+    nextObject: 'pen',
     nextColor: 'black',
     nextLineWidth: 3,
     nextFont: 'Arial',
@@ -32,7 +32,6 @@ $(document).ready(function() {
 
     redo: function redo() {
       if(this.undoShapes.length > 0 && this.undoShapes != 'undefined') {
-        console.log("thisistrue");
         this.shapes.push(this.undoShapes.pop());
         context.clearRect(0, 0, canvas.width, canvas.height);
         drawing.drawAll();
@@ -105,22 +104,22 @@ $(document).ready(function() {
     }
   }
 
-  function PenPoint(point) {
-    this.point = point;
-
-    this.draw = function draw() {
-      context.lineTo(this.x, this.y);
-      context.stroke();
-    }
-  }
-
-  function Pen(points) {
+  function Pen(points, color, lineWidth) {
     this.points = points;
+    this.color = color;
+    this.lineWidth = lineWidth;
 
     this.draw = function draw() {
-      console.log("inside draw function in pen");
       for(var i = 0; i < this.points.length; i++) {
-        this.points[i].draw();
+        if(i === 0) {
+          context.beginPath();
+          context.moveTo(this.points[i].x, this.points[i].y);
+        } else {
+          context.lineWidth = this.lineWidth;
+          context.strokeStyle = this.color;
+          context.lineTo(this.points[i].x, this.points[i].y)
+          context.stroke();
+        }
       }
     }
   }
@@ -139,17 +138,19 @@ $(document).ready(function() {
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
+    points = [];
 
     if(drawing.nextObject === 'line' || drawing.nextObject === 'rect' || 
       drawing.nextObject === 'circle' || drawing.nextObject === 'text') {
       startPoint = new Point(x, y);
     } else if (drawing.nextObject === 'pen') {
       startPoint = new Point(x, y);
-      penPoint =  new PenPoint(startPoint);
-      points.push(penPoint);
+      points.push(startPoint);
       context.beginPath();
       context.moveTo(x, y);
-    };
+    } else if(drawing.nextObject === 'select') {
+      
+    }
 
     isDrawing = true;
   });
@@ -190,11 +191,21 @@ $(document).ready(function() {
         context.stroke();
         context.closePath();
       } else if (drawing.nextObject === 'pen') {
-        var point = new Point(x, y);
-        var penPoint = new PenPoint(point);
-        points.push(penPoint);
-        context.lineTo(x, y);
-        context.stroke();
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        point = new Point(x, y);
+        points.push(point);
+
+        for(var i = 0; i < points.length; i++) {
+          if(i === 0) {
+            context.beginPath();
+            context.moveTo(points[i].x, points[i].y);
+          } else {
+            context.lineWidth = drawing.nextLineWidth;
+            context.strokeStyle = drawing.nextColor;
+            context.lineTo(points[i].x, points[i].y)
+            context.stroke();
+          }
+        }
       };
 
       drawing.drawAll();
@@ -221,8 +232,7 @@ $(document).ready(function() {
       //console.log(text);
       drawing.shapes.push(new Text(text, startPoint, drawing.nextColor, drawing.nextTextSize, drawing.nextFont));
     } else if(drawing.nextObject === 'pen') {
-      drawing.shapes.push(new Pen(points));
-      points = [];
+      drawing.shapes.push(new Pen(points, drawing.nextColor, drawing.nextLineWidth));
     }
     
     drawing.drawAll();
@@ -282,23 +292,23 @@ $(document).ready(function() {
   });
 
   $('#extrasmall').click(function(e) {
-    drawing.lineWidth = 1;
+    drawing.nextLineWidth = 1;
   });
 
   $('#small').click(function(e) {
-    drawing.lineWidth = 3;
+    drawing.nextLineWidth = 3;
   });
 
   $('#medium').click(function(e) {
-    drawing.lineWidth = 5;
+    drawing.nextLineWidth = 5;
   });
 
   $('#large').click(function(e) {
-    drawing.lineWidth = 9;
+    drawing.nextLineWidth = 9;
   });
 
   $('#extralarge').click(function(e) {
-    drawing.lineWidth = 12;
+    drawing.nextLineWidth = 12;
   });
 
   $('#8pt').click(function(e) {
