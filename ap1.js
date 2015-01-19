@@ -9,6 +9,7 @@ $(document).ready(function() {
     nextLineWidth: 3,
     nextFont: 'Arial',
     nextTextSize: '18px',
+    undoShapes: [],
     
     drawAll: function drawAll() {
       for(var i = 0; i < this.shapes.length; i++) {
@@ -19,6 +20,23 @@ $(document).ready(function() {
     clearBoard: function clearBoard() {
       this.shapes = [];
       context.clearRect(0, 0, canvas.width, canvas.height);
+    },
+
+    undo: function undo() {
+      if(this.shapes.length > 0 && this.shapes != 'undefined') {
+        this.undoShapes.push(this.shapes.pop());
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        drawing.drawAll();
+      }
+    },
+
+    redo: function redo() {
+      if(this.undoShapes.length > 0 && this.undoShapes != 'undefined') {
+        console.log("thisistrue");
+        this.shapes.push(this.undoShapes.pop());
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        drawing.drawAll();
+      }
     }
   }
 
@@ -73,7 +91,8 @@ $(document).ready(function() {
     }
   }
 
-  function Text(point, color, textSize, textFont) {
+  function Text(text, point, color, textSize, textFont) {
+    this.text = text;
     this.point = point;
     this.color = color;
     this.textSize = textSize;
@@ -82,7 +101,7 @@ $(document).ready(function() {
     this.draw = function draw() {
       context.font = this.textSize + ' ' + this.textFont;
       context.fillStyle = this.color;
-      context.fillText("fooo", this.point.x, this.point.y);
+      context.fillText(text, this.point.x, this.point.y);
     }
   }
 
@@ -163,7 +182,11 @@ $(document).ready(function() {
       var point = new Point(xCircle, yCircle);
       drawing.shapes.push(new Circle(point, radius, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'text') {
-      drawing.shapes.push(new Text(startPoint, drawing.nextColor, drawing.nextTextSize, drawing.nextFont));
+      var inputText = document.getElementById('textInput');
+      //$('#drawBoard').append(inputText);
+      var text = $('#textInput').val();
+      //console.log(text);
+      drawing.shapes.push(new Text(text, startPoint, drawing.nextColor, drawing.nextTextSize, drawing.nextFont));
     }
     
     drawing.drawAll();
@@ -288,6 +311,14 @@ $(document).ready(function() {
 
   $('#serif').click(function(e) {
     drawing.nextFont = 'serif';
+  });
+
+  $('#undo').click(function(e) {
+    drawing.undo();
+  });
+
+  $('#redo').click(function(e) {
+    drawing.redo();
   });
 
 
