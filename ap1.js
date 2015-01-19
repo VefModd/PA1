@@ -105,6 +105,26 @@ $(document).ready(function() {
     }
   }
 
+  function PenPoint(point) {
+    this.point = point;
+
+    this.draw = function draw() {
+      context.lineTo(this.x, this.y);
+      context.stroke();
+    }
+  }
+
+  function Pen(points) {
+    this.points = points;
+
+    this.draw = function draw() {
+      console.log("inside draw function in pen");
+      for(var i = 0; i < this.points.length; i++) {
+        this.points[i].draw();
+      }
+    }
+  }
+
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
@@ -114,6 +134,7 @@ $(document).ready(function() {
   var xRect, yRect, width, height;
   var xCircle, yCircle, radius;
   var text;
+  var points = [];
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
@@ -122,7 +143,13 @@ $(document).ready(function() {
     if(drawing.nextObject === 'line' || drawing.nextObject === 'rect' || 
       drawing.nextObject === 'circle' || drawing.nextObject === 'text') {
       startPoint = new Point(x, y);
-    }
+    } else if (drawing.nextObject === 'pen') {
+      startPoint = new Point(x, y);
+      penPoint =  new PenPoint(startPoint);
+      points.push(penPoint);
+      context.beginPath();
+      context.moveTo(x, y);
+    };
 
     isDrawing = true;
   });
@@ -162,7 +189,13 @@ $(document).ready(function() {
         context.lineWidth = drawing.nextLineWidth;
         context.stroke();
         context.closePath();
-      }
+      } else if (drawing.nextObject === 'pen') {
+        var point = new Point(x, y);
+        var penPoint = new PenPoint(point);
+        points.push(penPoint);
+        context.lineTo(x, y);
+        context.stroke();
+      };
 
       drawing.drawAll();
     }
@@ -187,6 +220,9 @@ $(document).ready(function() {
       var text = $('#textInput').val();
       //console.log(text);
       drawing.shapes.push(new Text(text, startPoint, drawing.nextColor, drawing.nextTextSize, drawing.nextFont));
+    } else if(drawing.nextObject === 'pen') {
+      drawing.shapes.push(new Pen(points));
+      points = [];
     }
     
     drawing.drawAll();
