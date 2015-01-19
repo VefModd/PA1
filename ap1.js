@@ -6,7 +6,9 @@ $(document).ready(function() {
     shapes: [],
     nextObject: 'line',
     nextColor: 'black',
-    lineWidth: 3,
+    nextLineWidth: 3,
+    nextFont: 'Arial',
+    nextTextSize: '18px',
     
     drawAll: function drawAll() {
       for(var i = 0; i < this.shapes.length; i++) {
@@ -71,6 +73,19 @@ $(document).ready(function() {
     }
   }
 
+  function Text(point, color, textSize, textFont) {
+    this.point = point;
+    this.color = color;
+    this.textSize = textSize;
+    this.textFont = textFont;
+
+    this.draw = function draw() {
+      context.font = this.textSize + ' ' + this.textFont;
+      context.fillStyle = this.color;
+      context.fillText("fooo", this.point.x, this.point.y);
+    }
+  }
+
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
@@ -79,14 +94,14 @@ $(document).ready(function() {
   var startPoint, endPoint;
   var xRect, yRect, width, height;
   var xCircle, yCircle, radius;
-  var kappa = .5522848, ellipsePoint, endPoint, middlePoint, controlPoint;
+  var text;
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
 
     if(drawing.nextObject === 'line' || drawing.nextObject === 'rect' || 
-      drawing.nextObject === 'circle' || drawing.nextObject === 'ellipse') {
+      drawing.nextObject === 'circle' || drawing.nextObject === 'text') {
       startPoint = new Point(x, y);
     }
 
@@ -104,7 +119,7 @@ $(document).ready(function() {
         context.moveTo(startPoint.x, startPoint.y);
         context.lineTo(x, y);
         context.strokeStyle = drawing.nextColor;
-        context.lineWidth = drawing.lineWidth;
+        context.lineWidth = drawing.nextLineWidth;
         context.stroke();
       } else if(drawing.nextObject === 'rect') {
         width = Math.abs(x - startPoint.x);
@@ -113,7 +128,7 @@ $(document).ready(function() {
         yRect = Math.min(y, startPoint.y);
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.strokeStyle = drawing.nextColor;
-        context.lineWidth = drawing.lineWidth;
+        context.lineWidth = drawing.nextLineWidth;
         context.strokeRect(xRect, yRect, width, height);
       } else if(drawing.nextObject === 'circle') {
         xCircle = (x + startPoint.x) / 2;
@@ -125,7 +140,7 @@ $(document).ready(function() {
         context.arc(xCircle, yCircle, radius, 0, 2 * Math.PI, false);
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.strokeStyle = drawing.nextColor;
-        context.lineWidth = drawing.lineWidth;
+        context.lineWidth = drawing.nextLineWidth;
         context.stroke();
         context.closePath();
       }
@@ -140,13 +155,15 @@ $(document).ready(function() {
 
     if(drawing.nextObject === 'line') {
       var endPoint = new Point(x, y);
-      drawing.shapes.push(new Line(startPoint, endPoint, drawing.nextColor, drawing.lineWidth));
+      drawing.shapes.push(new Line(startPoint, endPoint, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'rect') {
       var point = new Point(xRect, yRect);
-      drawing.shapes.push(new Rect(point, width, height, drawing.nextColor, drawing.lineWidth));
+      drawing.shapes.push(new Rect(point, width, height, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'circle') {
       var point = new Point(xCircle, yCircle);
-      drawing.shapes.push(new Circle(point, radius, drawing.nextColor, drawing.lineWidth));
+      drawing.shapes.push(new Circle(point, radius, drawing.nextColor, drawing.nextLineWidth));
+    } else if(drawing.nextObject === 'text') {
+      drawing.shapes.push(new Text(startPoint, drawing.nextColor, drawing.nextTextSize, drawing.nextFont));
     }
     
     drawing.drawAll();
@@ -225,15 +242,53 @@ $(document).ready(function() {
     drawing.lineWidth = 12;
   });
 
+  $('#8pt').click(function(e) {
+    drawing.nextTextSize = '11px';
+  });
 
+  $('#10pt').click(function(e) {
+    drawing.nextTextSize = '13px';
+  });
 
+  $('#12pt').click(function(e) {
+    drawing.nextTextSize = '16px';
+  });
 
+  $('#14pt').click(function(e) {
+    drawing.nextTextSize = '18px';
+  });
 
+  $('#16pt').click(function(e) {
+    drawing.nextTextSize = '21px';
+  });
 
+  $('#18pt').click(function(e) {
+    drawing.nextTextSize = '24px';
+  });
 
+  $('#20pt').click(function(e) {
+    drawing.nextTextSize = '28px';
+  });
 
+  $('#arial').click(function(e) {
+    drawing.nextFont = 'Arial';
+  });
 
+  $('#verdana').click(function(e) {
+    drawing.nextFont = 'Verdana';
+  });
 
+  $('#times').click(function(e) {
+    drawing.nextFont = 'Times New Roman';
+  });
+
+  $('#courier').click(function(e) {
+    drawing.nextFont = 'Courier New';
+  });
+
+  $('#serif').click(function(e) {
+    drawing.nextFont = 'serif';
+  });
 
 
 
