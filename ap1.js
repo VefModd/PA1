@@ -261,10 +261,25 @@ $(document).ready(function() {
 
       $('#textInput').append(currTextInput);
       currTextInput.focus();
+
+      $(document).keypress(function(e) {
+        if(e.which === 13) {
+          if(currTextInput) {
+            var inputBoxOffset = currTextInput.offset();
+            var text = new Text(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
+            drawing.shapes.push(text);
+          
+            createStaticText(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
+          
+            currTextInput.remove();
+          }
+        }
+      });
+
     }
     //for white background, not transparent, when saving image
     context.fillStyle = '#FFFFFF';
-    context.fillRect(0,0,canvas.width, canvas.height);
+    context.fillRect(0, 0, canvas.width, canvas.height);
     
     drawing.drawAll();
     isDrawing = false;
@@ -278,20 +293,6 @@ $(document).ready(function() {
     
     $('#textInput').append(staticText);
   }
-
-  $(document).keypress(function(event) {
-    if(event.which === 13) {
-        if(currTextInput) {
-          var inputBoxOffset = currTextInput.offset();
-          var text = new Text(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
-          drawing.shapes.push(text);
-          
-          createStaticText(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
-          
-          currTextInput.remove();
-        }
-    }
-  });
 
   $('#pen').click(function(e) {
     drawing.nextObject = 'pen';
