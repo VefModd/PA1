@@ -110,6 +110,8 @@ $(document).ready(function() {
     this.lineWidth = lineWidth;
 
     this.draw = function draw() {
+      console.log(drawing.shapes);
+
       for(var i = 0; i < this.points.length; i++) {
         if(i === 0) {
           context.beginPath();
