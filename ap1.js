@@ -124,23 +124,18 @@ $(document).ready(function() {
     }
   }
 
-  function Text(left, top, text, color) {
-    this.left = left;
-    this.top = top;
+  function Text(x, y, text, color, font, size) {
+    this.x = x;
+    this.y = y;
     this.text = text;
     this.color = color;
+    this.font = font;
+    this.size = size;
 
     this.draw = function draw() {
-      console.log("Drawing text");
-      
-      console.log(drawing.shapes);
-      staticText = $('<p style="color:' + color + '">' + text + '</p>');
-      staticText.css('position', 'fixed');
-      staticText.css('top', top - 15);
-      staticText.css('left', left);
-      
-      $('#textInput').append(staticText);
-      
+      context.font = this.size + ' ' + this.font;
+      context.fillStyle = this.color;
+      context.fillText(this.text, this.x, this.y);
     }
   }
 
@@ -225,7 +220,7 @@ $(document).ready(function() {
             context.stroke();
           }
         }
-      };
+      }
 
       drawing.drawAll();
     }
@@ -247,6 +242,7 @@ $(document).ready(function() {
     } else if(drawing.nextObject === 'pen') {
       drawing.shapes.push(new Pen(points, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'text') {
+      context.clearRect(0, 0, canvas.width, canvas.height);
       if(currTextInput) {
         currTextInput.remove();
       }
@@ -261,38 +257,30 @@ $(document).ready(function() {
 
       $('#textInput').append(currTextInput);
       currTextInput.focus();
-
-      $(document).keypress(function(e) {
-        if(e.which === 13) {
-          if(currTextInput) {
-            var inputBoxOffset = currTextInput.offset();
-            var text = new Text(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
-            drawing.shapes.push(text);
-          
-            createStaticText(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
-          
-            currTextInput.remove();
-          }
-        }
-      });
-
     }
+
     //for white background, not transparent, when saving image
-    context.fillStyle = '#FFFFFF';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    
+    //context.fillStyle = '#FFFFFF';
+    //context.fillRect(0, 0, canvas.width, canvas.height);
+
     drawing.drawAll();
     isDrawing = false;
   });
 
-  function createStaticText(left, top, text, color) {
-    staticText = $('<p style="color:' + color + '">' + text + '</p>');
-    staticText.css('position', 'fixed');
-    staticText.css('top', top - 15);
-    staticText.css('left', left);
-    
-    $('#textInput').append(staticText);
-  }
+  $(document).keypress(function(e) {
+    if(e.which === 13) {
+      if(currTextInput) {
+        var inputBoxOffset = currTextInput.offset();
+        console.log("pushing");
+        drawing.shapes.push(new Text(startPoint.x, startPoint.y, currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
+      
+        currTextInput.remove();
+      }
+    }
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    drawing.drawAll();
+  });
 
   $('#pen').click(function(e) {
     drawing.nextObject = 'pen';
