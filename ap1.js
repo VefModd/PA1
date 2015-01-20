@@ -251,6 +251,9 @@ $(document).ready(function() {
       var y = e.pageY;
 
       currTextInput = $('<input />');
+      currTextInput.css('font-size', drawing.nextTextSize);
+      currTextInput.css('color', drawing.nextColor);
+      currTextInput.css('font-family', drawing.nextFont);
       currTextInput.css('position', 'fixed');
       currTextInput.css('top', y);
       currTextInput.css('left', x);
@@ -271,7 +274,6 @@ $(document).ready(function() {
     if(e.which === 13) {
       if(currTextInput) {
         var inputBoxOffset = currTextInput.offset();
-        console.log("pushing");
         drawing.shapes.push(new Text(startPoint.x, startPoint.y, currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
       
         currTextInput.remove();
