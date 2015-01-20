@@ -124,6 +124,26 @@ $(document).ready(function() {
     }
   }
 
+  function Text(left, top, text, color) {
+    this.left = left;
+    this.top = top;
+    this.text = text;
+    this.color = color;
+
+    this.draw = function draw() {
+      console.log("Drawing text");
+      
+      console.log(drawing.shapes);
+      staticText = $('<p style="color:' + color + '">' + text + '</p>');
+      staticText.css('position', 'fixed');
+      staticText.css('top', top - 15);
+      staticText.css('left', left);
+      
+      $('#textInput').append(staticText);
+      
+    }
+  }
+
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
@@ -134,6 +154,7 @@ $(document).ready(function() {
   var xCircle, yCircle, radius;
   var text;
   var points = [];
+  var currTextInput;
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
@@ -148,8 +169,6 @@ $(document).ready(function() {
       points.push(startPoint);
       context.beginPath();
       context.moveTo(x, y);
-    } else if(drawing.nextObject === 'select') {
-      
     }
 
     isDrawing = true;
@@ -225,18 +244,50 @@ $(document).ready(function() {
     } else if(drawing.nextObject === 'circle') {
       var point = new Point(xCircle, yCircle);
       drawing.shapes.push(new Circle(point, radius, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'text') {
-      var inputText = document.getElementById('textInput');
-      //$('#drawBoard').append(inputText);
-      var text = $('#textInput').val();
-      //console.log(text);
-      drawing.shapes.push(new Text(text, startPoint, drawing.nextColor, drawing.nextTextSize, drawing.nextFont));
     } else if(drawing.nextObject === 'pen') {
       drawing.shapes.push(new Pen(points, drawing.nextColor, drawing.nextLineWidth));
+    } else if(drawing.nextObject === 'text') {
+      if(currTextInput) {
+        currTextInput.remove();
+      }
+
+      var x = e.pageX;
+      var y = e.pageY;
+
+      currTextInput = $('<input />');
+      currTextInput.css('position', 'fixed');
+      currTextInput.css('top', y);
+      currTextInput.css('left', x);
+
+      $('#textInput').append(currTextInput);
+      currTextInput.focus();
     }
     
     drawing.drawAll();
     isDrawing = false;
+  });
+
+  function createStaticText(left, top, text, color) {
+    staticText = $('<p style="color:' + color + '">' + text + '</p>');
+    staticText.css('position', 'fixed');
+    staticText.css('top', top - 15);
+    staticText.css('left', left);
+    
+    $('#textInput').append(staticText);
+  }
+
+  $(document).keypress(function(event) {
+    if(event.which === 13) {
+        if(currTextInput) {
+          var inputBoxOffset = currTextInput.offset();
+          var text = new Text(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
+          drawing.shapes.push(text);
+          
+          createStaticText(inputBoxOffset.left, inputBoxOffset.top, currTextInput.val(), drawing.nextColor);
+          
+          currTextInput.remove();
+        }
+    }
   });
 
   $('#pen').click(function(e) {
@@ -366,10 +417,6 @@ $(document).ready(function() {
   $('#redo').click(function(e) {
     drawing.redo();
   });
-
-
-
-
 
 
 
