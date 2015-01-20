@@ -262,6 +262,9 @@ $(document).ready(function() {
       $('#textInput').append(currTextInput);
       currTextInput.focus();
     }
+    //for white background, not transparent, when saving image
+    context.fillStyle = '#FFFFFF';
+    context.fillRect(0,0,canvas.width, canvas.height);
     
     drawing.drawAll();
     isDrawing = false;
@@ -418,7 +421,30 @@ $(document).ready(function() {
     drawing.redo();
   });
 
+  var button = document.getElementById('btn-download');
+  button.addEventListener('click', function (e) {
+    var dataURL = canvas.toDataURL('image/png');
+    button.href = dataURL;
+  });
 
 
+  /* load thingy
+  function el(id){return document.getElementById(id);} // Get elem by ID
+  function readImage() {
+    if ( this.files && this.files[0] ) {
+        var FR= new FileReader();
+        FR.onload = function(e) {
+           var img = new Image();
+           img.onload = function() {
+             context.drawImage(img, 0, 0);
+           };
+    img.src = e.target.result;
+        };       
+        FR.readAsDataURL( this.files[0] );
+    }
+}
+
+el("fileUpload").addEventListener("change", readImage, false);
+*/
 
 });
