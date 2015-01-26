@@ -45,8 +45,7 @@ $(document).ready(function() {
           return this.shapes[i];
         }
       }
-    }
-    */
+    }*/
   }
 
   function Point(x, y) {
@@ -62,6 +61,23 @@ $(document).ready(function() {
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
     };
+
+    /*
+    this.reachable = function reachable(_x, _y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+
+      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+    */
 
     this.draw = function draw() {
       context.beginPath();
@@ -163,6 +179,7 @@ $(document).ready(function() {
   var isDrawing = false;
   var textPoint;
   var currTextInput;
+  var currShape;
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
@@ -176,9 +193,9 @@ $(document).ready(function() {
       drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'pen') {
       drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'select') {
-
-    }
+    } /*else if(drawing.nextObject === 'select') {
+      currShape = drawing.select(x,y);
+    }*/
     
     isDrawing = true;
   });
