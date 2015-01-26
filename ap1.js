@@ -107,8 +107,6 @@ $(document).ready(function() {
     }
   }
 
-  
-
   function Pen(x, y, color, lineWidth) {
     this.points = [];
     this.points.push(new Point(x, y));
@@ -134,24 +132,17 @@ $(document).ready(function() {
     }
   }
 
-  
   function Text(x, y, text, color, font, size) {
-    this.startPoint = new Point(x, y);
-    this.x = x;
-    this.y = y;
+    this.textPoint = new Point(x, y);
     this.text = text;
     this.color = color;
     this.font = font;
     this.size = size;
 
-    this.setEndPoint = function setEndPoint(_x, _y) {
-      this.endPoint = new Point(_x, _y);
-    }
-
     this.draw = function draw() {
       context.font = this.size + ' ' + this.font;
       context.fillStyle = this.color;
-      context.fillText(this.text, this.x, this.y);
+      context.fillText(this.text, this.textPoint.x, this.textPoint.y);
     }
   }
 
@@ -160,8 +151,7 @@ $(document).ready(function() {
   context.canvas.height = window.innerHeight - 20;
 
   var isDrawing = false;
-  var startPoint, endPoint;
-  var text;
+  var textPoint;
   var currTextInput;
 
   $('#drawBoard').mousedown(function(e) {
@@ -177,10 +167,6 @@ $(document).ready(function() {
     } else if(drawing.nextObject === 'pen') {
       drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
     }
-
-    if(drawing.nextObject === 'text') {
-      startPoint = new Point(x, y);
-    }
     
     isDrawing = true;
   });
@@ -191,21 +177,17 @@ $(document).ready(function() {
       var y = e.pageY - this.offsetTop;
 
       if(drawing.nextObject !== 'text') {
-      var shape = drawing.shapes[drawing.shapes.length - 1];
-      shape.setEndPoint(x, y);
-      context.clearRect(0, 0, canvas.width, canvas.height);
+        var shape = drawing.shapes[drawing.shapes.length - 1];
+        shape.setEndPoint(x, y);
       }
 
+      context.clearRect(0, 0, canvas.width, canvas.height);
       drawing.drawAll();
     }
   });
 
   $('#drawBoard').mouseup(function(e) {
-    var x = e.pageX - this.offsetLeft;
-    var y = e.pageY - this.offsetTop;
-
     if(drawing.nextObject === 'text') {
-      context.clearRect(0, 0, canvas.width, canvas.height);
       if(currTextInput) {
         currTextInput.remove();
       }
@@ -223,6 +205,7 @@ $(document).ready(function() {
 
       $('#textInput').append(currTextInput);
       currTextInput.focus();
+      textPoint = new Point(x - this.offsetLeft, y - this.offsetTop);
     }
 
     drawing.drawAll();
@@ -232,9 +215,7 @@ $(document).ready(function() {
   $(document).keypress(function(e) {
     if(e.which === 13) {
       if(currTextInput) {
-        var inputBoxOffset = currTextInput.offset();
-        drawing.shapes.push(new Text(startPoint.x, startPoint.y, currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
-      
+        drawing.shapes.push(new Text(textPoint.x, textPoint.y, currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
         currTextInput.remove();
       }
     }
