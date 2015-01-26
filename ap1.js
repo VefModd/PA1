@@ -155,38 +155,18 @@ $(document).ready(function() {
     }
   }
 
-  /*
-  function Text(text, point, color, textSize, textFont) {
-    this.text = text;
-    this.point = point;
-    this.color = color;
-    this.textSize = textSize;
-    this.textFont = textFont;
-
-    this.draw = function draw() {
-      context.font = this.textSize + ' ' + this.textFont;
-      context.fillStyle = this.color;
-      context.fillText(text, this.point.x, this.point.y);
-    }
-  }
-  */
-
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
 
   var isDrawing = false;
   var startPoint, endPoint;
-  var xRect, yRect, width, height;
-  var xCircle, yCircle, radius;
   var text;
-  var points = [];
   var currTextInput;
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
-    points = [];
 
     if(drawing.nextObject === 'line') {
       drawing.shapes.push(new Line(x, y, drawing.nextColor, drawing.nextLineWidth));
@@ -196,16 +176,12 @@ $(document).ready(function() {
       drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'pen') {
       drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
-    } //else if(drawing.nextObject === 'text') {
-      //drawing.shapes.push(new Text(x, y));
-    //} 
+    }
 
-    
     if(drawing.nextObject === 'text') {
       startPoint = new Point(x, y);
     }
     
-
     isDrawing = true;
   });
 
