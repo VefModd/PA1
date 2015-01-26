@@ -44,11 +44,14 @@ $(document).ready(function() {
     this.y = y;
   }
 
-  function Line(startPoint, endPoint, color, lineWidth) {
-    this.startPoint = startPoint;
-    this.endPoint = endPoint;
+  function Line(x, y, color, lineWidth) {
+    this.startPoint = new Point(x, y);
     this.color = color;
     this.lineWidth = lineWidth;
+
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.endPoint = new Point(_x, _y);
+    };
 
     this.draw = function draw() {
       context.beginPath();
@@ -57,32 +60,46 @@ $(document).ready(function() {
       context.strokeStyle = this.color;
       context.lineWidth = this.lineWidth;
       context.stroke();
-    }
+    };
   }
 
-  function Rect(point, width, height, color, lineWidth) {
-    this.point = point;
-    this.height = height;
-    this.width = width;
+  function Rect(x, y, color, lineWidth) {
+    this.startPoint = new Point(x, y);
     this.color = color;
     this.lineWidth = lineWidth;
 
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.endPoint = new Point(_x, _y);
+    };
+
     this.draw = function draw() {
+      var width = Math.abs(this.endPoint.x - this.startPoint.x);
+      var height = Math.abs(this.endPoint.y - this.startPoint.y);
+      var xRect = Math.min(this.endPoint.x, this.startPoint.x);
+      var yRect = Math.min(this.endPoint.y, this.startPoint.y);
       context.strokeStyle = this.color;
       context.lineWidth = this.lineWidth;
-      context.strokeRect(this.point.x, this.point.y, this.width, this.height);
-    }
+      context.strokeRect(xRect, yRect, width, height);
+    };
   }
 
-  function Circle(point, radius, color, lineWidth) {
-    this.point = point;
-    this.radius = radius;
+  function Circle(x, y, color, lineWidth) {
+    this.startPoint = new Point(x, y);
     this.color = color;
     this.lineWidth = lineWidth;
 
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.endPoint = new Point(_x, _y);
+    }
+
     this.draw = function draw() {
+      var xCircle = (this.endPoint.x + this.startPoint.x) / 2;
+      var yCircle = (this.endPoint.y + this.startPoint.y) / 2;
+      var radius = Math.max(
+        Math.abs(this.endPoint.x - this.startPoint.x),
+        Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
       context.beginPath(); 
-      context.arc(this.point.x, this.point.y, this.radius, 0, 2 * Math.PI, false);
+      context.arc(this.startPoint.x, this.startPoint.y, radius, 0, 2 * Math.PI, false);
       context.strokeStyle = this.color;
       context.lineWidth = this.lineWidth;
       context.stroke();
@@ -90,28 +107,19 @@ $(document).ready(function() {
     }
   }
 
-  function Text(text, point, color, textSize, textFont) {
-    this.text = text;
-    this.point = point;
-    this.color = color;
-    this.textSize = textSize;
-    this.textFont = textFont;
+  
 
-    this.draw = function draw() {
-      context.font = this.textSize + ' ' + this.textFont;
-      context.fillStyle = this.color;
-      context.fillText(text, this.point.x, this.point.y);
-    }
-  }
-
-  function Pen(points, color, lineWidth) {
-    this.points = points;
+  function Pen(x, y, color, lineWidth) {
+    this.points = [];
+    this.points.push(new Point(x, y));
     this.color = color;
     this.lineWidth = lineWidth;
 
-    this.draw = function draw() {
-      console.log(drawing.shapes);
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.points.push(new Point(_x, _y));
+    }
 
+    this.draw = function draw() {
       for(var i = 0; i < this.points.length; i++) {
         if(i === 0) {
           context.beginPath();
@@ -126,7 +134,9 @@ $(document).ready(function() {
     }
   }
 
+  
   function Text(x, y, text, color, font, size) {
+    this.startPoint = new Point(x, y);
     this.x = x;
     this.y = y;
     this.text = text;
@@ -134,12 +144,32 @@ $(document).ready(function() {
     this.font = font;
     this.size = size;
 
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.endPoint = new Point(_x, _y);
+    }
+
     this.draw = function draw() {
       context.font = this.size + ' ' + this.font;
       context.fillStyle = this.color;
       context.fillText(this.text, this.x, this.y);
     }
   }
+
+  /*
+  function Text(text, point, color, textSize, textFont) {
+    this.text = text;
+    this.point = point;
+    this.color = color;
+    this.textSize = textSize;
+    this.textFont = textFont;
+
+    this.draw = function draw() {
+      context.font = this.textSize + ' ' + this.textFont;
+      context.fillStyle = this.color;
+      context.fillText(text, this.point.x, this.point.y);
+    }
+  }
+  */
 
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
@@ -158,15 +188,23 @@ $(document).ready(function() {
     var y = e.pageY - this.offsetTop;
     points = [];
 
-    if(drawing.nextObject === 'line' || drawing.nextObject === 'rect' || 
-      drawing.nextObject === 'circle' || drawing.nextObject === 'text') {
+    if(drawing.nextObject === 'line') {
+      drawing.shapes.push(new Line(x, y, drawing.nextColor, drawing.nextLineWidth));
+    } else if(drawing.nextObject === 'rect') {
+      drawing.shapes.push(new Rect(x, y, drawing.nextColor, drawing.nextLineWidth));
+    } else if(drawing.nextObject === 'circle') {
+      drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
+    } else if(drawing.nextObject === 'pen') {
+      drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
+    } //else if(drawing.nextObject === 'text') {
+      //drawing.shapes.push(new Text(x, y));
+    //} 
+
+    
+    if(drawing.nextObject === 'text') {
       startPoint = new Point(x, y);
-    } else if (drawing.nextObject === 'pen') {
-      startPoint = new Point(x, y);
-      points.push(startPoint);
-      context.beginPath();
-      context.moveTo(x, y);
     }
+    
 
     isDrawing = true;
   });
@@ -175,53 +213,11 @@ $(document).ready(function() {
     if(isDrawing) {
       var x = e.pageX - this.offsetLeft;
       var y = e.pageY - this.offsetTop;
-      
-      if(drawing.nextObject === 'line') {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.beginPath();
-        context.moveTo(startPoint.x, startPoint.y);
-        context.lineTo(x, y);
-        context.strokeStyle = drawing.nextColor;
-        context.lineWidth = drawing.nextLineWidth;
-        context.stroke();
-      } else if(drawing.nextObject === 'rect') {
-        width = Math.abs(x - startPoint.x);
-        height = Math.abs(y - startPoint.y);
-        xRect = Math.min(x, startPoint.x);
-        yRect = Math.min(y, startPoint.y);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.strokeStyle = drawing.nextColor;
-        context.lineWidth = drawing.nextLineWidth;
-        context.strokeRect(xRect, yRect, width, height);
-      } else if(drawing.nextObject === 'circle') {
-        xCircle = (x + startPoint.x) / 2;
-        yCircle = (y + startPoint.y) / 2;
-        radius = Math.max(
-          Math.abs(x - startPoint.x),
-          Math.abs(y - startPoint.y)) / 2;
-        context.beginPath();
-        context.arc(xCircle, yCircle, radius, 0, 2 * Math.PI, false);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.strokeStyle = drawing.nextColor;
-        context.lineWidth = drawing.nextLineWidth;
-        context.stroke();
-        context.closePath();
-      } else if (drawing.nextObject === 'pen') {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        point = new Point(x, y);
-        points.push(point);
 
-        for(var i = 0; i < points.length; i++) {
-          if(i === 0) {
-            context.beginPath();
-            context.moveTo(points[i].x, points[i].y);
-          } else {
-            context.lineWidth = drawing.nextLineWidth;
-            context.strokeStyle = drawing.nextColor;
-            context.lineTo(points[i].x, points[i].y)
-            context.stroke();
-          }
-        }
+      if(drawing.nextObject !== 'text') {
+      var shape = drawing.shapes[drawing.shapes.length - 1];
+      shape.setEndPoint(x, y);
+      context.clearRect(0, 0, canvas.width, canvas.height);
       }
 
       drawing.drawAll();
@@ -232,18 +228,7 @@ $(document).ready(function() {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
 
-    if(drawing.nextObject === 'line') {
-      var endPoint = new Point(x, y);
-      drawing.shapes.push(new Line(startPoint, endPoint, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'rect') {
-      var point = new Point(xRect, yRect);
-      drawing.shapes.push(new Rect(point, width, height, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'circle') {
-      var point = new Point(xCircle, yCircle);
-      drawing.shapes.push(new Circle(point, radius, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'pen') {
-      drawing.shapes.push(new Pen(points, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'text') {
+    if(drawing.nextObject === 'text') {
       context.clearRect(0, 0, canvas.width, canvas.height);
       if(currTextInput) {
         currTextInput.remove();
@@ -263,10 +248,6 @@ $(document).ready(function() {
       $('#textInput').append(currTextInput);
       currTextInput.focus();
     }
-
-    //for white background, not transparent, when saving image
-    //context.fillStyle = '#FFFFFF';
-    //context.fillRect(0, 0, canvas.width, canvas.height);
 
     drawing.drawAll();
     isDrawing = false;
