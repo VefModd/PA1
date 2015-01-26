@@ -36,7 +36,17 @@ $(document).ready(function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         drawing.drawAll();
       }
+    },
+
+    /*
+    select: function select(x, y) {
+      for(var i = this.shapes.length - 1; i >= 0; i--) {
+        if(this.shapes[i].reachable(x, y)) {
+          return this.shapes[i];
+        }
+      }
     }
+    */
   }
 
   function Point(x, y) {
@@ -166,6 +176,8 @@ $(document).ready(function() {
       drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
     } else if(drawing.nextObject === 'pen') {
       drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
+    } else if(drawing.nextObject === 'select') {
+
     }
     
     isDrawing = true;
