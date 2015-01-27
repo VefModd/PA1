@@ -229,7 +229,7 @@ $(document).ready(function() {
 
     this.reachable = function reachable(_x, _y) {
       for(var i = 0; i < this.points.length; i++) {
-        if(Math.abs(this.points[i].x - _x) <= 20 && Math.abs(this.points[i].y - _y) <= 20) {
+        if(Math.abs(this.points[i].x - _x) <= 30 && Math.abs(this.points[i].y - _y) <= 30) {
           console.log("true");
           return true;
         }
