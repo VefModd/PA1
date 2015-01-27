@@ -108,6 +108,38 @@ $(document).ready(function() {
       this.endPoint = new Point(_x, _y);
     };
 
+    // TODO
+    /*
+    this.reachable = function reachable(_x, _y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+
+      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.startPoint.x = this.startPoint.x + _x;
+      this.startPoint.y = this.startPoint.y + _y;
+      this.endPoint.x = this.endPoint.x + _x;
+      this.endPoint.y = this.endPoint.y + _y;
+    };
+    */
+    // TODO
+
     this.draw = function draw() {
       var width = Math.abs(this.endPoint.x - this.startPoint.x);
       var height = Math.abs(this.endPoint.y - this.startPoint.y);
@@ -127,6 +159,38 @@ $(document).ready(function() {
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
     }
+
+    // TODO
+    /*
+    this.reachable = function reachable(_x, _y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+
+      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.startPoint.x = this.startPoint.x + _x;
+      this.startPoint.y = this.startPoint.y + _y;
+      this.endPoint.x = this.endPoint.x + _x;
+      this.endPoint.y = this.endPoint.y + _y;
+    };
+    */
+    // TODO
 
     this.draw = function draw() {
       var xCircle = (this.endPoint.x + this.startPoint.x) / 2;
@@ -153,6 +217,38 @@ $(document).ready(function() {
       this.points.push(new Point(_x, _y));
     }
 
+    // TODO
+    /*
+    this.reachable = function reachable(_x, _y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+
+      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.startPoint.x = this.startPoint.x + _x;
+      this.startPoint.y = this.startPoint.y + _y;
+      this.endPoint.x = this.endPoint.x + _x;
+      this.endPoint.y = this.endPoint.y + _y;
+    };
+    */
+    // TODO
+
     this.draw = function draw() {
       for(var i = 0; i < this.points.length; i++) {
         if(i === 0) {
@@ -174,6 +270,38 @@ $(document).ready(function() {
     this.color = color;
     this.font = font;
     this.size = size;
+
+    // TODO
+    /*
+    this.reachable = function reachable(_x, _y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+
+      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.startPoint.x = this.startPoint.x + _x;
+      this.startPoint.y = this.startPoint.y + _y;
+      this.endPoint.x = this.endPoint.x + _x;
+      this.endPoint.y = this.endPoint.y + _y;
+    };
+    */
+    // TODO
 
     this.draw = function draw() {
       context.font = this.size + ' ' + this.font;
