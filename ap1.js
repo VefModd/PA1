@@ -281,15 +281,26 @@ $(document).ready(function() {
     this.font = font;
     this.size = size;
 
-    // TODO
-    /*
     this.reachable = function reachable(_x, _y) {
-      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
-      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+      var x1 = this.textPoint.x;
+      var y1 = this.textPoint.y;
+      var x2 = x1 + context.measureText(this.text).width;
+      var y2 = y1 - 25;
 
-      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+      // !
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y1);
+      context.moveTo(x2, y1);
+      context.lineTo(x2, y2);
+      context.moveTo(x2, y2);
+      context.lineTo(x1, y2);
+      context.moveTo(x1, y2);
+      context.lineTo(x1, y1);
+      context.stroke();
+      // !
+
+      if(x1 <= _x && _x <= x2 && y2 <= _y && _y <= y1) {
         console.log("true");
         return true;
       } else {
@@ -305,13 +316,9 @@ $(document).ready(function() {
     this.move = function move(_x, _y) {
       _x = _x - this.movingPoint.x;
       _y = _y - this.movingPoint.y;
-      this.startPoint.x = this.startPoint.x + _x;
-      this.startPoint.y = this.startPoint.y + _y;
-      this.endPoint.x = this.endPoint.x + _x;
-      this.endPoint.y = this.endPoint.y + _y;
+      this.textPoint.x = this.textPoint.x + _x;
+      this.textPoint.y = this.textPoint.y + _y;
     };
-    */
-    // TODO
 
     this.draw = function draw() {
       context.font = this.size + ' ' + this.font;
@@ -336,6 +343,7 @@ $(document).ready(function() {
 
     if(drawing.nextObject === 'select') {
       currShape = drawing.select(x, y);
+      console.log("select");
       if(currShape) {
         console.log("notcurrshape");
         currShape.setMovingPoint(x, y);
