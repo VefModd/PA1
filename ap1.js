@@ -52,6 +52,14 @@ $(document).ready(function() {
     this.y = y;
   }
 
+  function Picture(img){
+    this.img = img;
+    
+    this.draw = function draw(){
+      context.drawImage(img, 0, 0);
+    };
+  }
+
   function Line(x, y, color, lineWidth) {
     this.startPoint = new Point(x, y);
     this.color = color;
@@ -555,7 +563,7 @@ $(document).ready(function() {
   });
 
 
-  /* load thingy
+  // load thingy
   function el(id){return document.getElementById(id);} // Get elem by ID
   function readImage() {
     if ( this.files && this.files[0] ) {
@@ -564,6 +572,7 @@ $(document).ready(function() {
            var img = new Image();
            img.onload = function() {
              context.drawImage(img, 0, 0);
+             drawing.shapes.push(new Picture(img));
            };
     img.src = e.target.result;
         };       
@@ -572,6 +581,5 @@ $(document).ready(function() {
 }
 
 el("fileUpload").addEventListener("change", readImage, false);
-*/
 
 });
