@@ -198,8 +198,8 @@ $(document).ready(function() {
 
     if(drawing.nextObject === 'select') {
       currShape = drawing.select(x, y);
-      // skoða þetta typeof dæmi!!
-      if(typeof currShape !== 'undefined') {
+      if(currShape) {
+        console.log("notcurrshape");
         currShape.setMovingPoint(x, y);
         isMoving = true;
       }
