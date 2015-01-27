@@ -67,6 +67,19 @@ $(document).ready(function() {
       var y1 = Math.min(this.startPoint.y, this.endPoint.y);
       var y2 = Math.max(this.startPoint.y, this.endPoint.y);
 
+      // !!
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y1);
+      context.moveTo(x2, y1);
+      context.lineTo(x2, y2);
+      context.moveTo(x2, y2);
+      context.lineTo(x1, y2);
+      context.moveTo(x1, y2);
+      context.lineTo(x1, y1);
+      context.stroke();
+      // !!
+
       if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
         console.log("true");
         return true;
@@ -108,8 +121,6 @@ $(document).ready(function() {
       this.endPoint = new Point(_x, _y);
     };
 
-    // TODO
-    /*
     this.reachable = function reachable(_x, _y) {
       var x1 = Math.min(this.startPoint.x, this.endPoint.x);
       var x2 = Math.max(this.startPoint.x, this.endPoint.x);
@@ -137,8 +148,6 @@ $(document).ready(function() {
       this.endPoint.x = this.endPoint.x + _x;
       this.endPoint.y = this.endPoint.y + _y;
     };
-    */
-    // TODO
 
     this.draw = function draw() {
       var width = Math.abs(this.endPoint.x - this.startPoint.x);
@@ -155,20 +164,23 @@ $(document).ready(function() {
     this.startPoint = new Point(x, y);
     this.color = color;
     this.lineWidth = lineWidth;
+    this.radius;
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
     }
 
-    // TODO
-    /*
     this.reachable = function reachable(_x, _y) {
       var x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
       var y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+      x1 = x1 - radius;
+      y1 = y1 - radius;
 
-      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+      // !
+      context.strokeRect(x1, y1, radius * 2, radius * 2);
+      // !
+
+      if((x1 <= _x) && (y1 <= _y) && _x <= (x1 + radius * 2) && (_y <= y1 + radius * 2)) {
         console.log("true");
         return true;
       } else {
@@ -189,13 +201,11 @@ $(document).ready(function() {
       this.endPoint.x = this.endPoint.x + _x;
       this.endPoint.y = this.endPoint.y + _y;
     };
-    */
-    // TODO
 
     this.draw = function draw() {
       var xCircle = (this.endPoint.x + this.startPoint.x) / 2;
       var yCircle = (this.endPoint.y + this.startPoint.y) / 2;
-      var radius = Math.max(
+      radius = Math.max(
         Math.abs(this.endPoint.x - this.startPoint.x),
         Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
       context.beginPath(); 
