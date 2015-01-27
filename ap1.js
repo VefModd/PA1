@@ -23,7 +23,7 @@ $(document).ready(function() {
     },
 
     undo: function undo() {
-      if(this.shapes.length > 0 && this.shapes != 'undefined') {
+      if(this.shapes.length > 0 && this.shapes !== 'undefined') {
         this.undoShapes.push(this.shapes.pop());
         context.clearRect(0, 0, canvas.width, canvas.height);
         drawing.drawAll();
@@ -31,21 +31,20 @@ $(document).ready(function() {
     },
 
     redo: function redo() {
-      if(this.undoShapes.length > 0 && this.undoShapes != 'undefined') {
+      if(this.undoShapes.length > 0 && this.undoShapes !== 'undefined') {
         this.shapes.push(this.undoShapes.pop());
         context.clearRect(0, 0, canvas.width, canvas.height);
         drawing.drawAll();
       }
     },
 
-    /*
     select: function select(x, y) {
       for(var i = this.shapes.length - 1; i >= 0; i--) {
         if(this.shapes[i].reachable(x, y)) {
           return this.shapes[i];
         }
       }
-    }*/
+    }
   }
 
   function Point(x, y) {
@@ -62,7 +61,6 @@ $(document).ready(function() {
       this.endPoint = new Point(_x, _y);
     };
 
-    /*
     this.reachable = function reachable(_x, _y) {
       var x1 = Math.min(this.startPoint.x, this.endPoint.x);
       var x2 = Math.max(this.startPoint.x, this.endPoint.x);
@@ -77,7 +75,19 @@ $(document).ready(function() {
         return false;
       }
     };
-    */
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.startPoint.x = this.startPoint.x + _x;
+      this.startPoint.y = this.startPoint.y + _y;
+      this.endPoint.x = this.endPoint.x + _x;
+      this.endPoint.y = this.endPoint.y + _y;
+    };
 
     this.draw = function draw() {
       context.beginPath();
@@ -177,6 +187,7 @@ $(document).ready(function() {
   context.canvas.height = window.innerHeight - 20;
 
   var isDrawing = false;
+  var isMoving = false;
   var textPoint;
   var currTextInput;
   var currShape;
@@ -185,34 +196,45 @@ $(document).ready(function() {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
 
-    if(drawing.nextObject === 'line') {
-      drawing.shapes.push(new Line(x, y, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'rect') {
-      drawing.shapes.push(new Rect(x, y, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'circle') {
-      drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
-    } else if(drawing.nextObject === 'pen') {
-      drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
-    } /*else if(drawing.nextObject === 'select') {
-      currShape = drawing.select(x,y);
-    }*/
-    
-    isDrawing = true;
+    if(drawing.nextObject === 'select') {
+      currShape = drawing.select(x, y);
+      // skoða þetta typeof dæmi!!
+      if(typeof currShape !== 'undefined') {
+        currShape.setMovingPoint(x, y);
+        isMoving = true;
+      }
+    } else {
+      if(drawing.nextObject === 'line') {
+        drawing.shapes.push(new Line(x, y, drawing.nextColor, drawing.nextLineWidth));
+      } else if(drawing.nextObject === 'rect') {
+        drawing.shapes.push(new Rect(x, y, drawing.nextColor, drawing.nextLineWidth));
+      } else if(drawing.nextObject === 'circle') {
+        drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
+      } else if(drawing.nextObject === 'pen') {
+        drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
+      }
+
+      isDrawing = true;
+    }
   });
 
   $('#drawBoard').mousemove(function(e) {
-    if(isDrawing) {
-      var x = e.pageX - this.offsetLeft;
-      var y = e.pageY - this.offsetTop;
+    var x = e.pageX - this.offsetLeft;
+    var y = e.pageY - this.offsetTop;
 
+    if(isDrawing) {
       if(drawing.nextObject !== 'text') {
         var shape = drawing.shapes[drawing.shapes.length - 1];
         shape.setEndPoint(x, y);
       }
-
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      drawing.drawAll();
+    } else if(isMoving) {
+      console.log("moveing!!");
+      currShape.move(x, y);
+      currShape.setMovingPoint(x, y);
     }
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    drawing.drawAll();
   });
 
   $('#drawBoard').mouseup(function(e) {
@@ -239,6 +261,7 @@ $(document).ready(function() {
 
     drawing.drawAll();
     isDrawing = false;
+    isMoving = false;
   });
 
   $(document).keypress(function(e) {
