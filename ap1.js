@@ -68,16 +68,17 @@ $(document).ready(function() {
     this.lineWidth = lineWidth;
     this.endPoint = this.startPoint;
     this.movingPoint;
+    var x1, x2, y1, y2;
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
     };
 
     this.reachable = function reachable(_x, _y) {
-      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
-      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+      x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      y2 = Math.max(this.startPoint.y, this.endPoint.y);
 
       // !!
       context.beginPath();
@@ -128,16 +129,20 @@ $(document).ready(function() {
     this.startPoint = new Point(x, y);
     this.color = color;
     this.lineWidth = lineWidth;
+    this.endPoint = this.startPoint;
+    this.movingPoint;
+    var x1, x2, y1, y2;
+    var width, height, xRect, yRect;
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
     };
 
     this.reachable = function reachable(_x, _y) {
-      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
-      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+      x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      y2 = Math.max(this.startPoint.y, this.endPoint.y);
 
       if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
         console.log("true");
@@ -162,10 +167,11 @@ $(document).ready(function() {
     };
 
     this.draw = function draw() {
-      var width = Math.abs(this.endPoint.x - this.startPoint.x);
-      var height = Math.abs(this.endPoint.y - this.startPoint.y);
-      var xRect = Math.min(this.endPoint.x, this.startPoint.x);
-      var yRect = Math.min(this.endPoint.y, this.startPoint.y);
+      width = Math.abs(this.endPoint.x - this.startPoint.x);
+      height = Math.abs(this.endPoint.y - this.startPoint.y);
+      xRect = Math.min(this.endPoint.x, this.startPoint.x);
+      yRect = Math.min(this.endPoint.y, this.startPoint.y);
+
       context.strokeStyle = this.color;
       context.lineWidth = this.lineWidth;
       context.strokeRect(xRect, yRect, width, height);
@@ -177,14 +183,18 @@ $(document).ready(function() {
     this.color = color;
     this.lineWidth = lineWidth;
     this.radius;
+    this.endPoint;
+    this.movingPoint;
+    var x1, y1;
+    var xCircle, yCircle;
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
     };
 
     this.reachable = function reachable(_x, _y) {
-      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      y1 = Math.min(this.startPoint.y, this.endPoint.y);
       x1 = x1 - radius;
       y1 = y1 - radius;
 
@@ -215,11 +225,12 @@ $(document).ready(function() {
     };
 
     this.draw = function draw() {
-      var xCircle = (this.endPoint.x + this.startPoint.x) / 2;
-      var yCircle = (this.endPoint.y + this.startPoint.y) / 2;
+      xCircle = (this.endPoint.x + this.startPoint.x) / 2;
+      yCircle = (this.endPoint.y + this.startPoint.y) / 2;
       radius = Math.max(
         Math.abs(this.endPoint.x - this.startPoint.x),
         Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
+      
       context.beginPath(); 
       context.arc(this.startPoint.x, this.startPoint.y, radius, 0, 2 * Math.PI, false);
       context.strokeStyle = this.color;
