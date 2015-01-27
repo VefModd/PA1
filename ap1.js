@@ -399,7 +399,7 @@ $(document).ready(function() {
       console.log("select");
       if(global.currShape) {
         console.log("notcurrshape");
-        currShape.setMovingPoint(x, y);
+        global.currShape.setMovingPoint(x, y);
         global.isMoving = true;
       }
     } else {
