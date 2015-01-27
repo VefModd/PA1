@@ -40,8 +40,10 @@ $(document).ready(function() {
 
     select: function select(x, y) {
       for(var i = this.shapes.length - 1; i >= 0; i--) {
-        if(this.shapes[i].reachable(x, y)) {
-          return this.shapes[i];
+        if(this.shapes[i].reachable) {
+          if(this.shapes[i].reachable(x, y)) {
+            return this.shapes[i];
+          }
         }
       }
     }
@@ -328,10 +330,29 @@ $(document).ready(function() {
     };
   }
 
-  /*
-  function Eraser() {
+  function Eraser(x, y, lineWidth) {
+    this.points = [];
+    this.points.push(new Point(x, y));
+    this.lineWidth = lineWidth;
 
-  }*/
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.points.push(new Point(_x, _y));
+    };
+
+    this.draw = function draw() {
+      for(var i = 0; i < this.points.length; i++) {
+        if(i === 0) {
+          context.beginPath();
+          context.moveTo(this.points[i].x, this.points[i].y);
+        } else {
+          context.lineWidth = this.lineWidth;
+          context.strokeStyle = '#FFFFFF';
+          context.lineTo(this.points[i].x, this.points[i].y)
+          context.stroke();
+        }
+      }
+    };
+  }
 
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
@@ -364,6 +385,8 @@ $(document).ready(function() {
         drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
       } else if(drawing.nextObject === 'pen') {
         drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
+      } else if(drawing.nextObject === 'eraser') {
+        drawing.shapes.push(new Eraser(x, y, drawing.nextLineWidth));
       }
 
       isDrawing = true;
