@@ -183,7 +183,7 @@ $(document).ready(function() {
     this.color = color;
     this.lineWidth = lineWidth;
     this.radius;
-    this.endPoint;
+    this.endPoint = this.startPoint;
     this.movingPoint;
     var x1, y1;
     var xCircle, yCircle;
@@ -195,14 +195,14 @@ $(document).ready(function() {
     this.reachable = function reachable(_x, _y) {
       x1 = Math.min(this.startPoint.x, this.endPoint.x);
       y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      x1 = x1 - radius;
-      y1 = y1 - radius;
+      x1 = x1 - this.radius;
+      y1 = y1 - this.radius;
 
       // !
-      context.strokeRect(x1, y1, radius * 2, radius * 2);
+      context.strokeRect(x1, y1, this.radius * 2, this.radius * 2);
       // !
 
-      if((x1 <= _x) && (y1 <= _y) && _x <= (x1 + radius * 2) && (_y <= y1 + radius * 2)) {
+      if((x1 <= _x) && (y1 <= _y) && _x <= (x1 + this.radius * 2) && (_y <= y1 + this.radius * 2)) {
         console.log("true");
         return true;
       } else {
@@ -227,12 +227,12 @@ $(document).ready(function() {
     this.draw = function draw() {
       xCircle = (this.endPoint.x + this.startPoint.x) / 2;
       yCircle = (this.endPoint.y + this.startPoint.y) / 2;
-      radius = Math.max(
+      this.radius = Math.max(
         Math.abs(this.endPoint.x - this.startPoint.x),
         Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
-      
+
       context.beginPath(); 
-      context.arc(this.startPoint.x, this.startPoint.y, radius, 0, 2 * Math.PI, false);
+      context.arc(this.startPoint.x, this.startPoint.y, this.radius, 0, 2 * Math.PI, false);
       context.strokeStyle = this.color;
       context.lineWidth = this.lineWidth;
       context.stroke();
@@ -245,6 +245,7 @@ $(document).ready(function() {
     this.points.push(new Point(x, y));
     this.color = color;
     this.lineWidth = lineWidth;
+    this.movingPoint;
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.points.push(new Point(_x, _y));
@@ -296,12 +297,14 @@ $(document).ready(function() {
     this.color = color;
     this.font = font;
     this.size = size;
+    this.movingPoint;
+    var x1, x2, y1, y1;
 
     this.reachable = function reachable(_x, _y) {
-      var x1 = this.textPoint.x;
-      var y1 = this.textPoint.y;
-      var x2 = x1 + context.measureText(this.text).width;
-      var y2 = y1 - 25;
+      x1 = this.textPoint.x;
+      y1 = this.textPoint.y;
+      x2 = x1 + context.measureText(this.text).width;
+      y2 = y1 - 25;
 
       // !
       context.beginPath();
