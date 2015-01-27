@@ -374,23 +374,33 @@ $(document).ready(function() {
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
 
+  var global = {
+    isDrawing : false,
+    isMoving : false,
+    textPoint : undefined,
+    currTextInput : undefined,
+    currShape : undefined
+  };
+
+  /*
   var isDrawing = false;
   var isMoving = false;
   var textPoint;
   var currTextInput;
   var currShape;
+    */
 
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
 
     if(drawing.nextObject === 'select') {
-      currShape = drawing.select(x, y);
+      global.currShape = drawing.select(x, y);
       console.log("select");
-      if(currShape) {
+      if(global.currShape) {
         console.log("notcurrshape");
         currShape.setMovingPoint(x, y);
-        isMoving = true;
+        global.isMoving = true;
       }
     } else {
       if(drawing.nextObject === 'line') {
@@ -405,7 +415,7 @@ $(document).ready(function() {
         drawing.shapes.push(new Eraser(x, y, drawing.nextLineWidth));
       }
 
-      isDrawing = true;
+      global.isDrawing = true;
     }
   });
 
@@ -413,15 +423,15 @@ $(document).ready(function() {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
 
-    if(isDrawing) {
+    if(global.isDrawing) {
       if(drawing.nextObject !== 'text') {
         var shape = drawing.shapes[drawing.shapes.length - 1];
         shape.setEndPoint(x, y);
       }
-    } else if(isMoving) {
+    } else if(global.isMoving) {
       console.log("moveing!!");
-      currShape.move(x, y);
-      currShape.setMovingPoint(x, y);
+      global.currShape.move(x, y);
+      global.currShape.setMovingPoint(x, y);
     }
 
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -430,36 +440,36 @@ $(document).ready(function() {
 
   $('#drawBoard').mouseup(function(e) {
     if(drawing.nextObject === 'text') {
-      if(currTextInput) {
-        currTextInput.remove();
+      if(global.currTextInput) {
+        global.currTextInput.remove();
       }
 
       var x = e.pageX;
       var y = e.pageY;
 
-      currTextInput = $('<input />');
-      currTextInput.css('font-size', drawing.nextTextSize);
-      currTextInput.css('color', drawing.nextColor);
-      currTextInput.css('font-family', drawing.nextFont);
-      currTextInput.css('position', 'fixed');
-      currTextInput.css('top', y);
-      currTextInput.css('left', x);
+      global.currTextInput = $('<input />');
+      global.currTextInput.css('font-size', drawing.nextTextSize);
+      global.currTextInput.css('color', drawing.nextColor);
+      global.currTextInput.css('font-family', drawing.nextFont);
+      global.currTextInput.css('position', 'fixed');
+      global.currTextInput.css('top', y);
+      global.currTextInput.css('left', x);
 
-      $('#textInput').append(currTextInput);
-      currTextInput.focus();
-      textPoint = new Point(x - this.offsetLeft, y - this.offsetTop);
+      $('#textInput').append(global.currTextInput);
+      global.currTextInput.focus();
+      global.textPoint = new Point(x - this.offsetLeft, y - this.offsetTop);
     }
 
     drawing.drawAll();
-    isDrawing = false;
-    isMoving = false;
+    global.isDrawing = false;
+    global.isMoving = false;
   });
 
   $(document).keypress(function(e) {
     if(e.which === 13) {
-      if(currTextInput) {
-        drawing.shapes.push(new Text(textPoint.x, textPoint.y, currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
-        currTextInput.remove();
+      if(global.currTextInput) {
+        drawing.shapes.push(new Text(global.textPoint.x, global.textPoint.y, global.currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
+        global.currTextInput.remove();
       }
     }
 
