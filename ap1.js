@@ -66,6 +66,8 @@ $(document).ready(function() {
     this.startPoint = new Point(x, y);
     this.color = color;
     this.lineWidth = lineWidth;
+    this.endPoint = this.startPoint;
+    this.movingPoint;
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
