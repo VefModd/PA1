@@ -168,7 +168,7 @@ $(document).ready(function() {
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.endPoint = new Point(_x, _y);
-    }
+    };
 
     this.reachable = function reachable(_x, _y) {
       var x1 = Math.min(this.startPoint.x, this.endPoint.x);
@@ -214,7 +214,7 @@ $(document).ready(function() {
       context.lineWidth = this.lineWidth;
       context.stroke();
       context.closePath();
-    }
+    };
   }
 
   function Pen(x, y, color, lineWidth) {
@@ -225,7 +225,7 @@ $(document).ready(function() {
 
     this.setEndPoint = function setEndPoint(_x, _y) {
       this.points.push(new Point(_x, _y));
-    }
+    };
 
     this.reachable = function reachable(_x, _y) {
       for(var i = 0; i < this.points.length; i++) {
@@ -264,7 +264,7 @@ $(document).ready(function() {
           context.stroke();
         }
       }
-    }
+    };
   }
 
   function Text(x, y, text, color, font, size) {
@@ -317,8 +317,13 @@ $(document).ready(function() {
       context.font = this.size + ' ' + this.font;
       context.fillStyle = this.color;
       context.fillText(this.text, this.textPoint.x, this.textPoint.y);
-    }
+    };
   }
+
+  /*
+  function Eraser() {
+
+  }*/
 
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
