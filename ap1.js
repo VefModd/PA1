@@ -54,11 +54,38 @@ $(document).ready(function() {
     this.y = y;
   }
 
-  function Picture(img){
+  function Picture(img, x, y){
     this.img = img;
+    this.point = new Point(x, y);
+    this.movingPoint;
+    var x1, x2, y1, y2;
+
+    this.reachable = function reachable(_x, _y) {
+      x1 = this.point.x + this.img.width;
+      y1 = this.point.y + this.img.height;
+
+      if(this.point.x <= _x && _x <= x1 && this.point.y <= _y && _y <= y1) {
+        console.log("inside pic true");
+        return true;
+      } else {
+        console.log("inside pic false");
+        return false;
+      }
+    }
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    }
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.point.x += _x;
+      this.point.y += _y;
+    }
     
     this.draw = function draw(){
-      context.drawImage(img, 0, 0);
+      context.drawImage(img, this.point.x, this.point.y);
     };
   }
 
@@ -382,14 +409,6 @@ $(document).ready(function() {
     currShape : undefined
   };
 
-  /*
-  var isDrawing = false;
-  var isMoving = false;
-  var textPoint;
-  var currTextInput;
-  var currShape;
-    */
-
   $('#drawBoard').mousedown(function(e) {
     var x = e.pageX - this.offsetLeft;
     var y = e.pageY - this.offsetTop;
@@ -621,14 +640,19 @@ $(document).ready(function() {
            var img = new Image();
            img.onload = function() {
              context.drawImage(img, 0, 0);
-             drawing.shapes.push(new Picture(img));
+             drawing.shapes.push(new Picture(img, 0, 0));
            };
     img.src = e.target.result;
         };       
         FR.readAsDataURL( this.files[0] );
     }
-}
+  }
 
-el("fileUpload").addEventListener("change", readImage, false);
+  el("fileUpload").addEventListener("change", readImage, false);
 
-});
+  });
+
+
+
+
+
