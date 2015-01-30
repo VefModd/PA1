@@ -496,33 +496,6 @@ $(document).ready(function() {
     drawing.drawAll();
   });
 
-  var button = document.getElementById('btn-download');
-  button.addEventListener('click', function (e) {
-    var dataURL = canvas.toDataURL('image/png');
-    button.href = dataURL;
-  });
-
-  // load thingy
-  function el(id){return document.getElementById(id);} // Get elem by ID
-  function readImage() {
-    if ( this.files && this.files[0] ) {
-        var FR= new FileReader();
-        FR.onload = function(e) {
-           var img = new Image();
-           img.onload = function() {
-             context.drawImage(img, 0, 0);
-             drawing.shapes.push(new Picture(img, 0, 0));
-           };
-    img.src = e.target.result;
-        };       
-        FR.readAsDataURL( this.files[0] );
-    }
-  }
-
-  el("fileUpload").addEventListener("change", readImage, false);
-
-  });
-
   $('#pen').click(function(e) {
     drawing.nextObject = 'pen';
   });
@@ -649,6 +622,33 @@ $(document).ready(function() {
 
   $('#redo').click(function(e) {
     drawing.redo();
+  });
+
+  var button = document.getElementById('btn-download');
+  button.addEventListener('click', function (e) {
+    var dataURL = canvas.toDataURL('image/png');
+    button.href = dataURL;
+  });
+
+  // load thingy
+  function el(id){return document.getElementById(id);} // Get elem by ID
+  function readImage() {
+    if ( this.files && this.files[0] ) {
+        var FR= new FileReader();
+        FR.onload = function(e) {
+           var img = new Image();
+           img.onload = function() {
+             context.drawImage(img, 0, 0);
+             drawing.shapes.push(new Picture(img, 0, 0));
+           };
+    img.src = e.target.result;
+        };       
+        FR.readAsDataURL( this.files[0] );
+    }
+  }
+
+  el("fileUpload").addEventListener("change", readImage, false);
+
   });
 
 
