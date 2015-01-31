@@ -552,6 +552,36 @@ $(document).ready(function() {
       // Something went wrong...
       }
     });
+
+    $.ajax({
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      url: "http://whiteboard.apphb.com/Home/GetList",
+      data: param,
+      dataType: "jsonp",
+      crossDomain: true,
+      success: function (data) {
+      // The save was successful...
+      },
+      error: function (xhr, err) {
+      // Something went wrong...
+      }
+    });
+
+    $.ajax({
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
+      data: param,
+      dataType: "jsonp",
+      crossDomain: true,
+      success: function (data) {
+      // The save was successful...
+      },
+      error: function (xhr, err) {
+      // Something went wrong...
+      }
+    });
   });
 
   var button = document.getElementById('btn-download');
