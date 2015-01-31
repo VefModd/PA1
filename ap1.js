@@ -72,19 +72,6 @@ $(document).ready(function() {
       var y1 = Math.min(this.startPoint.y, this.endPoint.y);
       var y2 = Math.max(this.startPoint.y, this.endPoint.y);
 
-      // !!
-      context.beginPath();
-      context.moveTo(x1, y1);
-      context.lineTo(x2, y1);
-      context.moveTo(x2, y1);
-      context.lineTo(x2, y2);
-      context.moveTo(x2, y2);
-      context.lineTo(x1, y2);
-      context.moveTo(x1, y2);
-      context.lineTo(x1, y1);
-      context.stroke();
-      // !!
-
       if(x1 <= x && x <= x2 && y1 <= y && y <= y2) {
         console.log("true");
         return true;
@@ -146,10 +133,6 @@ $(document).ready(function() {
       var x1 = x1 - this.radius;
       var y1 = y1 - this.radius;
 
-      // !
-      context.strokeRect(x1, y1, this.radius * 2, this.radius * 2);
-      // !
-
       if((x1 <= x) && (y1 <= y) && x <= (x1 + this.radius * 2) && (y <= y1 + this.radius * 2)) {
         console.log("true");
         return true;
@@ -191,19 +174,6 @@ $(document).ready(function() {
       var y1 = this.textPoint.y;
       var x2 = x1 + context.measureText(this.text).width;
       var y2 = y2 = y1 - 25;
-
-      // !
-      context.beginPath();
-      context.moveTo(x1, y1);
-      context.lineTo(x2, y1);
-      context.moveTo(x2, y1);
-      context.lineTo(x2, y2);
-      context.moveTo(x2, y2);
-      context.lineTo(x1, y2);
-      context.moveTo(x1, y2);
-      context.lineTo(x1, y1);
-      context.stroke();
-      // !
 
       if(x1 <= x && x <= x2 && y2 <= y && y <= y1) {
         console.log("true");
@@ -280,6 +250,7 @@ $(document).ready(function() {
     },
 
     reachable : function() { },
+    
     move : function() { }
   });
 
