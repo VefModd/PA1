@@ -49,46 +49,157 @@ $(document).ready(function() {
     }
   }
 
+  var Shape = Base.extend({
+    constructor: function(x, y, color, lineWidth) {
+      this.startPoint = new Point(x, y);
+      this.color = color;
+      this.lineWidth = lineWidth;
+      this.endPoint = this.startPoint;
+      this.movingPoint;
+    }, 
+
+    setEndPoint : function(x, y) {
+      this.endPoint = new Point(x, y);
+    },
+
+    setMovingPoint : function(x, y) {
+      this.movingPoint = new Point(x, y);
+    },
+
+    reachable : function(x, y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var y2 = Math.max(this.startPoint.y, this.endPoint.y);
+
+      // !!
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y1);
+      context.moveTo(x2, y1);
+      context.lineTo(x2, y2);
+      context.moveTo(x2, y2);
+      context.lineTo(x1, y2);
+      context.moveTo(x1, y2);
+      context.lineTo(x1, y1);
+      context.stroke();
+      // !!
+
+      if(x1 <= x && x <= x2 && y1 <= y && y <= y2) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    },
+
+    move : function(x, y) {
+      x = x - this.movingPoint.x;
+      y = y - this.movingPoint.y;
+      this.startPoint.x += x;
+      this.startPoint.y += y;
+      this.endPoint.x += x;
+      this.endPoint.y += y;
+    },
+
+    draw : function () {
+      context.beginPath();
+      context.moveTo(this.startPoint.x, this.startPoint.y);
+      context.lineTo(this.endPoint.x, this.endPoint.y);
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
+      context.stroke();
+    }
+
+  });
+
+  var Point = Shape.extend({
+    constructor: function(x, y) {
+      this.x = x;
+      this.y = y;
+    }
+  });
+
+  var Line = Shape.extend({
+  });
+
+  var Rect = Shape.extend({
+    draw : function() {
+      var width = Math.abs(this.endPoint.x - this.startPoint.x);
+      var height = Math.abs(this.endPoint.y - this.startPoint.y);
+      var xRect = Math.min(this.endPoint.x, this.startPoint.x);
+      var yRect = Math.min(this.endPoint.y, this.startPoint.y);
+
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
+      context.strokeRect(xRect, yRect, width, height);
+    }
+  });
+
+  /*
   function Point(x, y) {
     this.x = x;
     this.y = y;
   }
+  */
 
-  function Picture(img, x, y){
-    this.img = img;
-    this.point = new Point(x, y);
+  /*
+  function Rect(x, y, color, lineWidth) {
+    this.startPoint = new Point(x, y);
+    this.color = color;
+    this.lineWidth = lineWidth;
+    this.endPoint = this.startPoint;
     this.movingPoint;
     var x1, x2, y1, y2;
+    var width, height, xRect, yRect;
+
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.endPoint = new Point(_x, _y);
+    };
 
     this.reachable = function reachable(_x, _y) {
-      x1 = this.point.x + this.img.width;
-      y1 = this.point.y + this.img.height;
+      x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      x2 = Math.max(this.startPoint.x, this.endPoint.x);
+      y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      y2 = Math.max(this.startPoint.y, this.endPoint.y);
 
-      if(this.point.x <= _x && _x <= x1 && this.point.y <= _y && _y <= y1) {
-        console.log("inside pic true");
+      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
+        console.log("true");
         return true;
       } else {
-        console.log("inside pic false");
+        console.log("false");
         return false;
       }
-    }
+    };
 
     this.setMovingPoint = function setMovingPoint(_x, _y) {
       this.movingPoint = new Point(_x, _y);
-    }
+    };
 
     this.move = function move(_x, _y) {
       _x = _x - this.movingPoint.x;
       _y = _y - this.movingPoint.y;
-      this.point.x += _x;
-      this.point.y += _y;
-    }
-    
-    this.draw = function draw(){
-      context.drawImage(img, this.point.x, this.point.y);
+      this.startPoint.x += _x;
+      this.startPoint.y += _y;
+      this.endPoint.x += _x;
+      this.endPoint.y += _y;
+    };
+
+    this.draw = function draw() {
+      width = Math.abs(this.endPoint.x - this.startPoint.x);
+      height = Math.abs(this.endPoint.y - this.startPoint.y);
+      xRect = Math.min(this.endPoint.x, this.startPoint.x);
+      yRect = Math.min(this.endPoint.y, this.startPoint.y);
+
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
+      context.strokeRect(xRect, yRect, width, height);
     };
   }
+  */
 
+  /*
   function Line(x, y, color, lineWidth) {
     this.startPoint = new Point(x, y);
     this.color = color;
@@ -151,57 +262,40 @@ $(document).ready(function() {
       context.stroke();
     };
   }
+  */
 
-  function Rect(x, y, color, lineWidth) {
-    this.startPoint = new Point(x, y);
-    this.color = color;
-    this.lineWidth = lineWidth;
-    this.endPoint = this.startPoint;
+  function Picture(img, x, y){
+    this.img = img;
+    this.point = new Point(x, y);
     this.movingPoint;
     var x1, x2, y1, y2;
-    var width, height, xRect, yRect;
-
-    this.setEndPoint = function setEndPoint(_x, _y) {
-      this.endPoint = new Point(_x, _y);
-    };
 
     this.reachable = function reachable(_x, _y) {
-      x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      x2 = Math.max(this.startPoint.x, this.endPoint.x);
-      y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      y2 = Math.max(this.startPoint.y, this.endPoint.y);
+      x1 = this.point.x + this.img.width;
+      y1 = this.point.y + this.img.height;
 
-      if(x1 <= _x && _x <= x2 && y1 <= _y && _y <= y2) {
-        console.log("true");
+      if(this.point.x <= _x && _x <= x1 && this.point.y <= _y && _y <= y1) {
+        console.log("inside pic true");
         return true;
       } else {
-        console.log("false");
+        console.log("inside pic false");
         return false;
       }
-    };
+    }
 
     this.setMovingPoint = function setMovingPoint(_x, _y) {
       this.movingPoint = new Point(_x, _y);
-    };
+    }
 
     this.move = function move(_x, _y) {
       _x = _x - this.movingPoint.x;
       _y = _y - this.movingPoint.y;
-      this.startPoint.x += _x;
-      this.startPoint.y += _y;
-      this.endPoint.x += _x;
-      this.endPoint.y += _y;
-    };
-
-    this.draw = function draw() {
-      width = Math.abs(this.endPoint.x - this.startPoint.x);
-      height = Math.abs(this.endPoint.y - this.startPoint.y);
-      xRect = Math.min(this.endPoint.x, this.startPoint.x);
-      yRect = Math.min(this.endPoint.y, this.startPoint.y);
-
-      context.strokeStyle = this.color;
-      context.lineWidth = this.lineWidth;
-      context.strokeRect(xRect, yRect, width, height);
+      this.point.x += _x;
+      this.point.y += _y;
+    }
+    
+    this.draw = function draw(){
+      context.drawImage(img, this.point.x, this.point.y);
     };
   }
 
