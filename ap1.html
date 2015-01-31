@@ -83,9 +83,16 @@
       <li id = "clearBoard"><a href="#">Clear board</a></li>
       <li id = "undo"><a href="#">Undo</a></li>
       <li id = "redo"><a href="#">Redo</a></li>
-      <li id = "save"><a href="#" class="button" id="btn-download" download="my-file-name.png">Save</a></li>
-      <li id = "load"><a href="#" class="file-input btn btn-primary btn-file">Load<input type="file" multiple id="fileUpload"/></a> </li>
 
+      <li id = "save"><a href="#" class="button" id="btn-download" download="my-file-name.png">Save as png</a></li>
+      <li id = "load"><a href="#" class="file-input btn btn-primary btn-file">Load as png<input type="file" multiple id="fileUpload"/></a> </li>
+
+      <form class="navbar-form navbar-left">
+        <input type="text" class="form-control col-lg-8" placeholder="Your name">
+        <input type="text" class="form-control col-lg-8" placeholder="Title">
+        <input class="file-input btn btn-primary btn-file" type="submit" value="Save as drawing" id="btn-submit">
+      </form>
+      
       <!--<li id = "load"><a href="#">Load</a></li>-->
       <!--<li id = "load"><a href="#" class="input" id = "fileUpload">Load</a></li>-->
       <!--<li id = "load"><input type='file' id="fileUpload" /></li>-->
