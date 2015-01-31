@@ -520,6 +520,40 @@ $(document).ready(function() {
     drawing.redo();
   });
 
+  var username = $("‪#‎saveUsername.val()‬");
+  var title = $("‪#‎saveTitle‬.val()");
+  var stringifiedArray = JSON.stringify(drawing.shapes);
+  
+  var param = {
+    "user": username,
+    "name": title,
+    "content": stringifiedArray,
+    "template": false
+  };
+  
+  $.ajax({
+    type: "POST",
+    contentType: "application/json; charset=utf-8",
+    url: "http://whiteboard.apphb.com/Home/Save",
+    data: param,
+    dataType: "jsonp",
+    crossDomain: true,
+    success: function (data) {
+    // The save was successful...
+    },
+    error: function (xhr, err) {
+    // Something went wrong...
+    }
+  });
+
+
+
+
+
+
+
+
+
   var button = document.getElementById('btn-download');
   button.addEventListener('click', function (e) {
     var dataURL = canvas.toDataURL('image/png');
@@ -544,5 +578,5 @@ $(document).ready(function() {
   }
 
   el("fileUpload").addEventListener("change", readImage, false);
-
+  
   });
