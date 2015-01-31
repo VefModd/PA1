@@ -520,8 +520,8 @@ $(document).ready(function() {
     drawing.redo();
   });
 
-  var username = $("‪#‎saveUsername.val()‬");
-  var title = $("‪#‎saveTitle‬.val()");
+  var username = $("‪#username").val();
+  var title = $("‪#title").val();
   var stringifiedArray = JSON.stringify(drawing.shapes);
   
   var param = {
@@ -546,14 +546,6 @@ $(document).ready(function() {
     }
   });
 
-
-
-
-
-
-
-
-
   var button = document.getElementById('btn-download');
   button.addEventListener('click', function (e) {
     var dataURL = canvas.toDataURL('image/png');
@@ -563,17 +555,17 @@ $(document).ready(function() {
   // load thingy
   function el(id){return document.getElementById(id);} // Get elem by ID
   function readImage() {
-    if ( this.files && this.files[0] ) {
-        var FR= new FileReader();
-        FR.onload = function(e) {
-           var img = new Image();
-           img.onload = function() {
-             context.drawImage(img, 0, 0);
-             drawing.shapes.push(new Picture(img, 0, 0));
-           };
-    img.src = e.target.result;
-        };       
-        FR.readAsDataURL( this.files[0] );
+    if(this.files && this.files[0] ) {
+      var FR= new FileReader();
+      FR.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          context.drawImage(img, 0, 0);
+          drawing.shapes.push(new Picture(img, 0, 0));
+        };
+        img.src = e.target.result;
+      };       
+      FR.readAsDataURL( this.files[0] );
     }
   }
 
