@@ -286,8 +286,6 @@ $(document).ready(function() {
     }
   });
 
-  
-
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
