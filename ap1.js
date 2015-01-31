@@ -137,6 +137,355 @@ $(document).ready(function() {
     }
   });
 
+  var Circle = Shape.extend({
+    radius : undefined,
+
+    reachable : function(x, y) {
+      var x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      var y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      var x1 = x1 - this.radius;
+      var y1 = y1 - this.radius;
+
+      // !
+      context.strokeRect(x1, y1, this.radius * 2, this.radius * 2);
+      // !
+
+      if((x1 <= x) && (y1 <= y) && x <= (x1 + this.radius * 2) && (y <= y1 + this.radius * 2)) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    },
+
+    draw : function () {
+      var xCircle = (this.endPoint.x + this.startPoint.x) / 2;
+      var yCircle = (this.endPoint.y + this.startPoint.y) / 2;
+      this.radius = Math.max(
+        Math.abs(this.endPoint.x - this.startPoint.x),
+        Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
+
+      context.beginPath(); 
+      context.arc(this.startPoint.x, this.startPoint.y, this.radius, 0, 2 * Math.PI, false);
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
+      context.stroke();
+      context.closePath();
+    }
+
+  });
+
+  var Text = Shape.extend({
+    constructor: function(x, y, text, color, font, size) {
+      this.textPoint = new Point(x, y);
+      this.text = text;
+      this.color = color;
+      this.font = font;
+      this.size = size;
+      this.movingPoint;
+    },
+
+    reachable : function(x, y) {
+      var x1 = this.textPoint.x;
+      var y1 = this.textPoint.y;
+      var x2 = x1 + context.measureText(this.text).width;
+      var y2 = y2 = y1 - 25;
+
+      // !
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y1);
+      context.moveTo(x2, y1);
+      context.lineTo(x2, y2);
+      context.moveTo(x2, y2);
+      context.lineTo(x1, y2);
+      context.moveTo(x1, y2);
+      context.lineTo(x1, y1);
+      context.stroke();
+      // !
+
+      if(x1 <= x && x <= x2 && y2 <= y && y <= y1) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    },
+
+    move : function(x, y) {
+      x = x - this.movingPoint.x;
+      y = y - this.movingPoint.y;
+      this.textPoint.x = this.textPoint.x + x;
+      this.textPoint.y = this.textPoint.y + y;
+    },
+
+    draw : function () {
+      context.font = this.size + ' ' + this.font;
+      context.fillStyle = this.color;
+      context.fillText(this.text, this.textPoint.x, this.textPoint.y);
+    }
+  });
+
+  var Pen = Shape.extend({
+    setPoints : function(x, y) {
+      this.points = [];
+      this.points.push(new Point(x, y));
+    },
+
+    setEndPoint : function(x, y) {
+      this.points.push(new Point(x, y));
+    },
+
+    reachable : function(x, y) {
+      for(var i = 0; i < this.points.length; i++) {
+        if(Math.abs(this.points[i].x - x) <= 30 && Math.abs(this.points[i].y - y) <= 30) {
+          console.log("true");
+          return true;
+        }
+      }
+      console.log("false");
+      return false;
+    },
+
+    move : function(x, y) {
+      x -= this.movingPoint.x;
+      y -= this.movingPoint.y;
+      
+      for(var i = 0; i < this.points.length; i++) {
+        this.points[i].x += x;
+        this.points[i].y += y;
+      }
+    },
+
+    draw : function () {
+      for(var i = 0; i < this.points.length; i++) {
+        if(i === 0) {
+          context.beginPath();
+          context.moveTo(this.points[i].x, this.points[i].y);
+        } else {
+          context.lineWidth = this.lineWidth;
+          context.strokeStyle = this.color;
+          context.lineTo(this.points[i].x, this.points[i].y)
+          context.stroke();
+        }
+      }
+    }
+  });
+
+  var Eraser = Pen.extend({
+    setWhiteColor : function() {
+      this.color = "#FFFFFF";
+    },
+
+    reachable : function() { },
+    move : function() { }
+  });
+
+
+  /*
+  function Eraser(x, y, lineWidth) {
+    this.points = [];
+    this.points.push(new Point(x, y));
+    this.lineWidth = lineWidth;
+
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.points.push(new Point(_x, _y));
+    };
+
+    this.draw = function draw() {
+      for(var i = 0; i < this.points.length; i++) {
+        if(i === 0) {
+          context.beginPath();
+          context.moveTo(this.points[i].x, this.points[i].y);
+        } else {
+          context.lineWidth = this.lineWidth;
+          context.strokeStyle = '#FFFFFF';
+          context.lineTo(this.points[i].x, this.points[i].y)
+          context.stroke();
+        }
+      }
+    };
+  }
+  */
+
+
+  /*
+  function Pen(x, y, color, lineWidth) {
+    this.points = [];
+    this.points.push(new Point(x, y));
+    this.color = color;
+    this.lineWidth = lineWidth;
+    this.movingPoint;
+
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.points.push(new Point(_x, _y));
+    };
+
+    this.reachable = function reachable(_x, _y) {
+      for(var i = 0; i < this.points.length; i++) {
+        if(Math.abs(this.points[i].x - _x) <= 30 && Math.abs(this.points[i].y - _y) <= 30) {
+          console.log("true");
+          return true;
+        }
+      }
+      console.log("false");
+      return false;
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x -= this.movingPoint.x;
+      _y -= this.movingPoint.y;
+      
+      for(var i = 0; i < this.points.length; i++) {
+        this.points[i].x += _x;
+        this.points[i].y += _y;
+      }
+    };
+
+    this.draw = function draw() {
+      for(var i = 0; i < this.points.length; i++) {
+        if(i === 0) {
+          context.beginPath();
+          context.moveTo(this.points[i].x, this.points[i].y);
+        } else {
+          context.lineWidth = this.lineWidth;
+          context.strokeStyle = this.color;
+          context.lineTo(this.points[i].x, this.points[i].y)
+          context.stroke();
+        }
+      }
+    };
+  }
+  */
+
+  /*
+  function Text(x, y, text, color, font, size) {
+    this.textPoint = new Point(x, y);
+    this.text = text;
+    this.color = color;
+    this.font = font;
+    this.size = size;
+    this.movingPoint;
+    var x1, x2, y1, y1;
+
+    this.reachable = function reachable(_x, _y) {
+      x1 = this.textPoint.x;
+      y1 = this.textPoint.y;
+      x2 = x1 + context.measureText(this.text).width;
+      y2 = y1 - 25;
+
+      // !
+      context.beginPath();
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y1);
+      context.moveTo(x2, y1);
+      context.lineTo(x2, y2);
+      context.moveTo(x2, y2);
+      context.lineTo(x1, y2);
+      context.moveTo(x1, y2);
+      context.lineTo(x1, y1);
+      context.stroke();
+      // !
+
+      if(x1 <= _x && _x <= x2 && y2 <= _y && _y <= y1) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.textPoint.x = this.textPoint.x + _x;
+      this.textPoint.y = this.textPoint.y + _y;
+    };
+
+    this.draw = function draw() {
+      context.font = this.size + ' ' + this.font;
+      context.fillStyle = this.color;
+      context.fillText(this.text, this.textPoint.x, this.textPoint.y);
+    };
+  }
+  */
+
+
+  /*
+  function Circle(x, y, color, lineWidth) {
+    this.startPoint = new Point(x, y);
+    this.color = color;
+    this.lineWidth = lineWidth;
+    this.radius;
+    this.endPoint = this.startPoint;
+    this.movingPoint;
+    var x1, y1;
+    var xCircle, yCircle;
+
+    this.setEndPoint = function setEndPoint(_x, _y) {
+      this.endPoint = new Point(_x, _y);
+    };
+
+    this.reachable = function reachable(_x, _y) {
+      x1 = Math.min(this.startPoint.x, this.endPoint.x);
+      y1 = Math.min(this.startPoint.y, this.endPoint.y);
+      x1 = x1 - this.radius;
+      y1 = y1 - this.radius;
+
+      // !
+      context.strokeRect(x1, y1, this.radius * 2, this.radius * 2);
+      // !
+
+      if((x1 <= _x) && (y1 <= _y) && _x <= (x1 + this.radius * 2) && (_y <= y1 + this.radius * 2)) {
+        console.log("true");
+        return true;
+      } else {
+        console.log("false");
+        return false;
+      }
+    };
+
+    this.setMovingPoint = function setMovingPoint(_x, _y) {
+      this.movingPoint = new Point(_x, _y);
+    };
+
+    this.move = function move(_x, _y) {
+      _x = _x - this.movingPoint.x;
+      _y = _y - this.movingPoint.y;
+      this.startPoint.x += _x;
+      this.startPoint.y += _y;
+      this.endPoint.x += _x;
+      this.endPoint.y += _y;
+    };
+
+    this.draw = function draw() {
+      xCircle = (this.endPoint.x + this.startPoint.x) / 2;
+      yCircle = (this.endPoint.y + this.startPoint.y) / 2;
+      this.radius = Math.max(
+        Math.abs(this.endPoint.x - this.startPoint.x),
+        Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
+
+      context.beginPath(); 
+      context.arc(this.startPoint.x, this.startPoint.y, this.radius, 0, 2 * Math.PI, false);
+      context.strokeStyle = this.color;
+      context.lineWidth = this.lineWidth;
+      context.stroke();
+      context.closePath();
+    };
+  }
+  */
+
   /*
   function Point(x, y) {
     this.x = x;
@@ -299,198 +648,6 @@ $(document).ready(function() {
     };
   }
 
-  function Circle(x, y, color, lineWidth) {
-    this.startPoint = new Point(x, y);
-    this.color = color;
-    this.lineWidth = lineWidth;
-    this.radius;
-    this.endPoint = this.startPoint;
-    this.movingPoint;
-    var x1, y1;
-    var xCircle, yCircle;
-
-    this.setEndPoint = function setEndPoint(_x, _y) {
-      this.endPoint = new Point(_x, _y);
-    };
-
-    this.reachable = function reachable(_x, _y) {
-      x1 = Math.min(this.startPoint.x, this.endPoint.x);
-      y1 = Math.min(this.startPoint.y, this.endPoint.y);
-      x1 = x1 - this.radius;
-      y1 = y1 - this.radius;
-
-      // !
-      context.strokeRect(x1, y1, this.radius * 2, this.radius * 2);
-      // !
-
-      if((x1 <= _x) && (y1 <= _y) && _x <= (x1 + this.radius * 2) && (_y <= y1 + this.radius * 2)) {
-        console.log("true");
-        return true;
-      } else {
-        console.log("false");
-        return false;
-      }
-    };
-
-    this.setMovingPoint = function setMovingPoint(_x, _y) {
-      this.movingPoint = new Point(_x, _y);
-    };
-
-    this.move = function move(_x, _y) {
-      _x = _x - this.movingPoint.x;
-      _y = _y - this.movingPoint.y;
-      this.startPoint.x += _x;
-      this.startPoint.y += _y;
-      this.endPoint.x += _x;
-      this.endPoint.y += _y;
-    };
-
-    this.draw = function draw() {
-      xCircle = (this.endPoint.x + this.startPoint.x) / 2;
-      yCircle = (this.endPoint.y + this.startPoint.y) / 2;
-      this.radius = Math.max(
-        Math.abs(this.endPoint.x - this.startPoint.x),
-        Math.abs(this.endPoint.y - this.startPoint.y)) / 2;
-
-      context.beginPath(); 
-      context.arc(this.startPoint.x, this.startPoint.y, this.radius, 0, 2 * Math.PI, false);
-      context.strokeStyle = this.color;
-      context.lineWidth = this.lineWidth;
-      context.stroke();
-      context.closePath();
-    };
-  }
-
-  function Pen(x, y, color, lineWidth) {
-    this.points = [];
-    this.points.push(new Point(x, y));
-    this.color = color;
-    this.lineWidth = lineWidth;
-    this.movingPoint;
-
-    this.setEndPoint = function setEndPoint(_x, _y) {
-      this.points.push(new Point(_x, _y));
-    };
-
-    this.reachable = function reachable(_x, _y) {
-      for(var i = 0; i < this.points.length; i++) {
-        if(Math.abs(this.points[i].x - _x) <= 30 && Math.abs(this.points[i].y - _y) <= 30) {
-          console.log("true");
-          return true;
-        }
-      }
-      console.log("false");
-      return false;
-    };
-
-    this.setMovingPoint = function setMovingPoint(_x, _y) {
-      this.movingPoint = new Point(_x, _y);
-    };
-
-    this.move = function move(_x, _y) {
-      _x -= this.movingPoint.x;
-      _y -= this.movingPoint.y;
-      
-      for(var i = 0; i < this.points.length; i++) {
-        this.points[i].x += _x;
-        this.points[i].y += _y;
-      }
-    };
-
-    this.draw = function draw() {
-      for(var i = 0; i < this.points.length; i++) {
-        if(i === 0) {
-          context.beginPath();
-          context.moveTo(this.points[i].x, this.points[i].y);
-        } else {
-          context.lineWidth = this.lineWidth;
-          context.strokeStyle = this.color;
-          context.lineTo(this.points[i].x, this.points[i].y)
-          context.stroke();
-        }
-      }
-    };
-  }
-
-  function Text(x, y, text, color, font, size) {
-    this.textPoint = new Point(x, y);
-    this.text = text;
-    this.color = color;
-    this.font = font;
-    this.size = size;
-    this.movingPoint;
-    var x1, x2, y1, y1;
-
-    this.reachable = function reachable(_x, _y) {
-      x1 = this.textPoint.x;
-      y1 = this.textPoint.y;
-      x2 = x1 + context.measureText(this.text).width;
-      y2 = y1 - 25;
-
-      // !
-      context.beginPath();
-      context.moveTo(x1, y1);
-      context.lineTo(x2, y1);
-      context.moveTo(x2, y1);
-      context.lineTo(x2, y2);
-      context.moveTo(x2, y2);
-      context.lineTo(x1, y2);
-      context.moveTo(x1, y2);
-      context.lineTo(x1, y1);
-      context.stroke();
-      // !
-
-      if(x1 <= _x && _x <= x2 && y2 <= _y && _y <= y1) {
-        console.log("true");
-        return true;
-      } else {
-        console.log("false");
-        return false;
-      }
-    };
-
-    this.setMovingPoint = function setMovingPoint(_x, _y) {
-      this.movingPoint = new Point(_x, _y);
-    };
-
-    this.move = function move(_x, _y) {
-      _x = _x - this.movingPoint.x;
-      _y = _y - this.movingPoint.y;
-      this.textPoint.x = this.textPoint.x + _x;
-      this.textPoint.y = this.textPoint.y + _y;
-    };
-
-    this.draw = function draw() {
-      context.font = this.size + ' ' + this.font;
-      context.fillStyle = this.color;
-      context.fillText(this.text, this.textPoint.x, this.textPoint.y);
-    };
-  }
-
-  function Eraser(x, y, lineWidth) {
-    this.points = [];
-    this.points.push(new Point(x, y));
-    this.lineWidth = lineWidth;
-
-    this.setEndPoint = function setEndPoint(_x, _y) {
-      this.points.push(new Point(_x, _y));
-    };
-
-    this.draw = function draw() {
-      for(var i = 0; i < this.points.length; i++) {
-        if(i === 0) {
-          context.beginPath();
-          context.moveTo(this.points[i].x, this.points[i].y);
-        } else {
-          context.lineWidth = this.lineWidth;
-          context.strokeStyle = '#FFFFFF';
-          context.lineTo(this.points[i].x, this.points[i].y)
-          context.stroke();
-        }
-      }
-    };
-  }
-
   context = canvas.getContext('2d');
   context.canvas.width = window.innerWidth - 20;
   context.canvas.height = window.innerHeight - 20;
@@ -524,8 +681,13 @@ $(document).ready(function() {
         drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
       } else if(drawing.nextObject === 'pen') {
         drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
+        shape = drawing.shapes[drawing.shapes.length - 1];
+        shape.setPoints(x, y);
       } else if(drawing.nextObject === 'eraser') {
         drawing.shapes.push(new Eraser(x, y, drawing.nextLineWidth));
+        shape = drawing.shapes[drawing.shapes.length - 1];
+        shape.setPoints(x, y);
+        shape.setWhiteColor();
       }
 
       global.isDrawing = true;
