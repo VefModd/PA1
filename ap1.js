@@ -517,27 +517,18 @@ $(document).ready(function() {
   $('#redo').click(function(e) {
     drawing.redo();
   });
-
-  $('#btn-submit').click(function(e) {
-    var userField = document.getElementById('getUsername');
-    var titleField = document.getElementById('getTitle');
-    var username = userField.value;
-    var title = titleField.value;
+/*
+  $('#saveDrawing').click(function(e) {
+    var title = prompt("Please write the title of this drawing");
     var stringifiedArray = JSON.stringify(drawing.shapes);
     
     var param = {
-      "user": username,
+      "user": "jorundur13",
       "name": title,
       "content": stringifiedArray,
       "template": false
     };
 
-    console.log("yes");
-    console.log(username);
-    console.log(title);
-    console.log(stringifiedArray);
-    console.log(param);
-    
     $.ajax({
       type: "POST",
       contentType: "application/json; charset=utf-8",
@@ -546,14 +537,56 @@ $(document).ready(function() {
       dataType: "jsonp",
       crossDomain: true,
       success: function (data) {
-      // The save was successful...
+        // The save was successful...
+        var array = [{ "ID": data.ID, "DrawingTitle": title}];
+        console.log("succes!");
+        console.log("data.ID: ", data.ID);
+        $("#Drawing").tmpl(array).appendTo("#selectDrawing");
       },
       error: function (xhr, err) {
+        console.log("error!");
+        console.log("xhr: ", xhr);
+        console.log("err: ", err);
       // Something went wrong...
       }
     });
 
+  });
+
+  $("#selectDrawing").click(function(e) {
+    var item = this.options[this.selectedIndex].value;
+    var param = { "id": item };
     $.ajax({
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
+        data: param,
+        dataType: "jsonp",
+        crossDomain: true,
+        success: function (data) {
+            var items = JSON.parse(data.WhiteboardContents);
+            for (var i = 0; i < items.length; i++){
+                var func = eval(items[i].ClassName);
+                items[i].__proto__ = func.prototype;
+                shapes.push(items[i]);
+            }
+
+            Redraw(context);
+        },
+        error: function (xhr, err) {
+            alert("error:\n" + xhr + "\n" + err);
+        }
+    });
+  });
+
+
+
+  var param = {
+      "user": "jorundur13",
+      "template": true
+  };
+
+  $.ajax({
       type: "GET",
       contentType: "application/json; charset=utf-8",
       url: "http://whiteboard.apphb.com/Home/GetList",
@@ -561,28 +594,16 @@ $(document).ready(function() {
       dataType: "jsonp",
       crossDomain: true,
       success: function (data) {
-      // The save was successful...
+          $("#Drawing").tmpl(data).appendTo("#selectDrawing");
       },
       error: function (xhr, err) {
-      // Something went wrong...
+          alert("error:\n" + xhr + "\n" + err);
       }
-    });
+  });  
 
-    $.ajax({
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
-      data: param,
-      dataType: "jsonp",
-      crossDomain: true,
-      success: function (data) {
-      // The save was successful...
-      },
-      error: function (xhr, err) {
-      // Something went wrong...
-      }
-    });
-  });
+*/
+
+
 
   var button = document.getElementById('btn-download');
   button.addEventListener('click', function (e) {
