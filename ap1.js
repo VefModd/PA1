@@ -517,16 +517,18 @@ $(document).ready(function() {
   $('#redo').click(function(e) {
     drawing.redo();
   });
+
 /*
   $('#saveDrawing').click(function(e) {
-    var title = prompt("Please write the title of this drawing");
+    var title = prompt("Please write the title of this drawing"); 
     var stringifiedArray = JSON.stringify(drawing.shapes);
+    console.log(stringifiedArray);
     
     var param = {
       "user": "jorundur13",
       "name": title,
       "content": stringifiedArray,
-      "template": false
+      "template": true
     };
 
     $.ajax({
@@ -537,17 +539,10 @@ $(document).ready(function() {
       dataType: "jsonp",
       crossDomain: true,
       success: function (data) {
-        // The save was successful...
-        var array = [{ "ID": data.ID, "DrawingTitle": title}];
-        console.log("succes!");
-        console.log("data.ID: ", data.ID);
-        $("#Drawing").tmpl(array).appendTo("#selectDrawing");
+        // success !      
       },
       error: function (xhr, err) {
-        console.log("error!");
-        console.log("xhr: ", xhr);
-        console.log("err: ", err);
-      // Something went wrong...
+        // error !
       }
     });
 
@@ -555,31 +550,53 @@ $(document).ready(function() {
 
   $("#selectDrawing").click(function(e) {
     var item = this.options[this.selectedIndex].value;
+    console.log("item: ", item);
     var param = { "id": item };
     $.ajax({
-        type: "GET",
-        contentType: "application/json; charset=utf-8",
-        url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
-        data: param,
-        dataType: "jsonp",
-        crossDomain: true,
-        success: function (data) {
-            var items = JSON.parse(data.WhiteboardContents);
-            for (var i = 0; i < items.length; i++){
-                var func = eval(items[i].ClassName);
-                items[i].__proto__ = func.prototype;
-                shapes.push(items[i]);
-            }
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
+      data: param,
+      dataType: "jsonp",
+      crossDomain: true,
+      success: function (data) {
+        console.log("data.WhiteboardContents: ", data.WhiteboardContents);
+        var items = JSON.parse(data.WhiteboardContents);
+        for (var i = 0; i < items.length; i++) {
+          console.log(items[i]);
+          if(items[i].nextObject === "pen"){
+            var thisPen = items[i];
+            thisPen.__proto__ = new Pen;
+            drawing.shapes.push(thisPen);
 
-            Redraw(context);
-        },
-        error: function (xhr, err) {
-            alert("error:\n" + xhr + "\n" + err);
+          } else if (items[i].nextObject === "rect") {
+            var thisRect = items[i];
+            thisRect.__proto__ = new Rect;
+            drawing.shapes.push(thisRect);
+
+          } else if (items[i].nextObject === "line") {
+            var thisLine = items[i];
+            thisLine.__proto__ = new Line;
+            drawing.shapes.push(thisLine);
+
+          } else if (items[i].nextObject === "circle") {
+            var thisCircle = items[i];
+            thisCircle.__proto__ = new Circle;
+            drawing.shapes.push(thisCircle);
+
+          } else if (items[i].nextObject === "text") {
+            var thisText = items[i];
+            thisText.__proto__ = new Text;
+            drawing.shapes.push(thisText);
+          }
         }
+        drawing.drawAll();
+      },
+      error: function (xhr, err) {
+        alert("error:\n" + xhr + "\n" + err);
+      }
     });
   });
-
-
 
   var param = {
       "user": "jorundur13",
@@ -587,23 +604,23 @@ $(document).ready(function() {
   };
 
   $.ajax({
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      url: "http://whiteboard.apphb.com/Home/GetList",
-      data: param,
-      dataType: "jsonp",
-      crossDomain: true,
-      success: function (data) {
-          $("#Drawing").tmpl(data).appendTo("#selectDrawing");
-      },
-      error: function (xhr, err) {
-          alert("error:\n" + xhr + "\n" + err);
+    type: "GET",
+    contentType: "application/json; charset=utf-8",
+    url: "http://whiteboard.apphb.com/Home/GetList",
+    data: param,
+    dataType: "jsonp",
+    crossDomain: true,
+    success: function (data) {
+      for(var i = 0; i < data.length; i++) {
+        $("#selectDrawing").append("<option value="+data[i].ID+">"+ data[i].WhiteboardTitle + "</option>");
       }
-  });  
+    },
+    error: function (xhr, err) {
+       alert("error:\n" + xhr + "\n" + err);
+    }
+  });
 
-*/
-
-
+  */
 
   var button = document.getElementById('btn-download');
   button.addEventListener('click', function (e) {
