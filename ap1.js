@@ -1,4 +1,8 @@
-$(document).ready(function() {
+  $(document).ready(function() {
+    getListOfDrawings();
+
+  });
+
   var canvas = document.getElementById('drawBoard');
   var context = canvas.getContext();
 
@@ -50,12 +54,13 @@ $(document).ready(function() {
   }
 
   var Shape = Base.extend({
-    constructor: function(x, y, color, lineWidth) {
+    constructor: function(x, y, color, lineWidth, type) {
       this.startPoint = new Point(x, y);
       this.color = color;
       this.lineWidth = lineWidth;
       this.endPoint = this.startPoint;
       this.movingPoint;
+      this.type = type;
     }, 
 
     setEndPoint : function(x, y) {
@@ -73,10 +78,8 @@ $(document).ready(function() {
       var y2 = Math.max(this.startPoint.y, this.endPoint.y);
 
       if(x1 <= x && x <= x2 && y1 <= y && y <= y2) {
-        console.log("true");
         return true;
       } else {
-        console.log("false");
         return false;
       }
     },
@@ -134,10 +137,8 @@ $(document).ready(function() {
       var y1 = y1 - this.radius;
 
       if((x1 <= x) && (y1 <= y) && x <= (x1 + this.radius * 2) && (y <= y1 + this.radius * 2)) {
-        console.log("true");
         return true;
       } else {
-        console.log("false");
         return false;
       }
     },
@@ -160,13 +161,14 @@ $(document).ready(function() {
   });
 
   var Text = Shape.extend({
-    constructor: function(x, y, text, color, font, size) {
+    constructor: function(x, y, text, color, font, size, type) {
       this.textPoint = new Point(x, y);
       this.text = text;
       this.color = color;
       this.font = font;
       this.size = size;
       this.movingPoint;
+      this.type = type;
     },
 
     reachable : function(x, y) {
@@ -176,10 +178,8 @@ $(document).ready(function() {
       var y2 = y2 = y1 - 25;
 
       if(x1 <= x && x <= x2 && y2 <= y && y <= y1) {
-        console.log("true");
         return true;
       } else {
-        console.log("false");
         return false;
       }
     },
@@ -211,11 +211,9 @@ $(document).ready(function() {
     reachable : function(x, y) {
       for(var i = 0; i < this.points.length; i++) {
         if(Math.abs(this.points[i].x - x) <= 30 && Math.abs(this.points[i].y - y) <= 30) {
-          console.log("true");
           return true;
         }
       }
-      console.log("false");
       return false;
     },
 
@@ -266,10 +264,8 @@ $(document).ready(function() {
       var y1 = this.startPoint.y + this.img.height;
 
       if(this.startPoint.x <= x && x <= x1 && this.startPoint.y <= y && y <= y1) {
-        console.log("inside pic true");
         return true;
       } else {
-        console.log("inside pic false");
         return false;
       }
     },
@@ -304,21 +300,19 @@ $(document).ready(function() {
 
     if(drawing.nextObject === 'select') {
       global.currShape = drawing.select(x, y);
-      console.log("select");
       if(global.currShape) {
-        console.log("notcurrshape");
         global.currShape.setMovingPoint(x, y);
         global.isMoving = true;
       }
     } else {
       if(drawing.nextObject === 'line') {
-        drawing.shapes.push(new Line(x, y, drawing.nextColor, drawing.nextLineWidth));
+        drawing.shapes.push(new Line(x, y, drawing.nextColor, drawing.nextLineWidth, "line"));
       } else if(drawing.nextObject === 'rect') {
-        drawing.shapes.push(new Rect(x, y, drawing.nextColor, drawing.nextLineWidth));
+        drawing.shapes.push(new Rect(x, y, drawing.nextColor, drawing.nextLineWidth, "rect"));
       } else if(drawing.nextObject === 'circle') {
-        drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth));
+        drawing.shapes.push(new Circle(x, y, drawing.nextColor, drawing.nextLineWidth, "circle"));
       } else if(drawing.nextObject === 'pen') {
-        drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth));
+        drawing.shapes.push(new Pen(x, y, drawing.nextColor, drawing.nextLineWidth, "pen"));
         shape = drawing.shapes[drawing.shapes.length - 1];
         shape.setPoints(x, y);
       } else if(drawing.nextObject === 'eraser') {
@@ -342,7 +336,6 @@ $(document).ready(function() {
         shape.setEndPoint(x, y);
       }
     } else if(global.isMoving) {
-      console.log("moveing!!");
       global.currShape.move(x, y);
       global.currShape.setMovingPoint(x, y);
     }
@@ -381,7 +374,7 @@ $(document).ready(function() {
   $(document).keypress(function(e) {
     if(e.which === 13) {
       if(global.currTextInput) {
-        drawing.shapes.push(new Text(global.textPoint.x, global.textPoint.y, global.currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize));
+        drawing.shapes.push(new Text(global.textPoint.x, global.textPoint.y, global.currTextInput.val(), drawing.nextColor, drawing.nextFont, drawing.nextTextSize, "text"));
         global.currTextInput.remove();
       }
     }
@@ -518,88 +511,43 @@ $(document).ready(function() {
     drawing.redo();
   });
 
-/*
+
   $('#saveDrawing').click(function(e) {
     var title = prompt("Please write the title of this drawing"); 
-    var stringifiedArray = JSON.stringify(drawing.shapes);
-    console.log(stringifiedArray);
-    
-    var param = {
-      "user": "jorundur13",
-      "name": title,
-      "content": stringifiedArray,
-      "template": true
-    };
+    if (title != "") {
 
-    $.ajax({
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      url: "http://whiteboard.apphb.com/Home/Save",
-      data: param,
-      dataType: "jsonp",
-      crossDomain: true,
-      success: function (data) {
-        // success !      
-      },
-      error: function (xhr, err) {
-        // error !
-      }
-    });
+      var stringifiedArray = JSON.stringify(drawing.shapes);
+      
+      var param = {
+        "user": "danielb13",
+        "name": title,
+        "content": stringifiedArray,
+        "template": true
+      };
 
-  });
-
-  $("#selectDrawing").click(function(e) {
-    var item = this.options[this.selectedIndex].value;
-    console.log("item: ", item);
-    var param = { "id": item };
-    $.ajax({
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
-      data: param,
-      dataType: "jsonp",
-      crossDomain: true,
-      success: function (data) {
-        console.log("data.WhiteboardContents: ", data.WhiteboardContents);
-        var items = JSON.parse(data.WhiteboardContents);
-        for (var i = 0; i < items.length; i++) {
-          console.log(items[i]);
-          if(items[i].nextObject === "pen"){
-            var thisPen = items[i];
-            thisPen.__proto__ = new Pen;
-            drawing.shapes.push(thisPen);
-
-          } else if (items[i].nextObject === "rect") {
-            var thisRect = items[i];
-            thisRect.__proto__ = new Rect;
-            drawing.shapes.push(thisRect);
-
-          } else if (items[i].nextObject === "line") {
-            var thisLine = items[i];
-            thisLine.__proto__ = new Line;
-            drawing.shapes.push(thisLine);
-
-          } else if (items[i].nextObject === "circle") {
-            var thisCircle = items[i];
-            thisCircle.__proto__ = new Circle;
-            drawing.shapes.push(thisCircle);
-
-          } else if (items[i].nextObject === "text") {
-            var thisText = items[i];
-            thisText.__proto__ = new Text;
-            drawing.shapes.push(thisText);
-          }
+      $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "http://whiteboard.apphb.com/Home/Save",
+        data: param,
+        dataType: "jsonp",
+        crossDomain: true,
+        success: function (data) {
+          // success !      
+        },
+        error: function (xhr, err) {
+          // error !
         }
-        drawing.drawAll();
-      },
-      error: function (xhr, err) {
-        alert("error:\n" + xhr + "\n" + err);
-      }
-    });
+      });
+    };
+    getListOfDrawings();
+
   });
 
+function getListOfDrawings(){
+  $("#selectDrawing").html("");
   var param = {
-      "user": "jorundur13",
+      "user": "danielb13",
       "template": true
   };
 
@@ -612,15 +560,15 @@ $(document).ready(function() {
     crossDomain: true,
     success: function (data) {
       for(var i = 0; i < data.length; i++) {
-        $("#selectDrawing").append("<option value="+data[i].ID+">"+ data[i].WhiteboardTitle + "</option>");
+        $("#selectDrawing").append('<li><a href="#" onclick="loadCanvasByID('+data[i].ID+')">'+ data[i].WhiteboardTitle + '</li>');
       }
     },
     error: function (xhr, err) {
        alert("error:\n" + xhr + "\n" + err);
     }
   });
+}
 
-  */
 
   var button = document.getElementById('btn-download');
   button.addEventListener('click', function (e) {
@@ -647,4 +595,52 @@ $(document).ready(function() {
 
   el("fileUpload").addEventListener("change", readImage, false);
   
-  });
+ function loadCanvasByID( item ) {
+    var param = { "id": item };
+
+    drawing.clearBoard();
+    $.ajax({
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      url: "http://whiteboard.apphb.com/Home/GetWhiteboard",
+      data: param,
+      dataType: "jsonp",
+      crossDomain: true,
+      success: function (data) {
+        var items = JSON.parse(data.WhiteboardContents);
+        for (var i = 0; i < items.length; i++) {
+          if(items[i].type === "pen"){
+            var thisPen = items[i];
+            thisPen.__proto__ = new Pen;
+            drawing.shapes.push(thisPen);
+
+          } else if (items[i].type === "rect") {
+            var thisRect = items[i];
+            thisRect.__proto__ = new Rect;
+            drawing.shapes.push(thisRect);
+
+          } else if (items[i].type === "line") {
+            var thisLine = items[i];
+            thisLine.__proto__ = new Line;
+            drawing.shapes.push(thisLine);
+
+          } else if (items[i].type === "circle") {
+            var thisCircle = items[i];
+            thisCircle.__proto__ = new Circle;
+            drawing.shapes.push(thisCircle);
+
+          } else if (items[i].type === "text") {
+            var thisText = items[i];
+            thisText.__proto__ = new Text;
+            drawing.shapes.push(thisText);
+          }
+        }
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        drawing.drawAll();
+      },
+      error: function (xhr, err) {
+        alert("error:\n" + xhr + "\n" + err);
+      }
+    });
+  }
+
